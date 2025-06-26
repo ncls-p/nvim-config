@@ -1,6 +1,6 @@
 # Modern Neovim Configuration (2025)
 
-A modern, well-structured Neovim configuration based on the latest trends and best practices for 2025.
+A highly optimized, feature-rich Neovim configuration built with lazy.nvim for blazing-fast startup times and modern development workflows. This configuration provides a complete IDE experience with LSP support, AI integration, and over 800 curated themes.
 
 ## ✨ Features
 
@@ -127,51 +127,164 @@ A modern, well-structured Neovim configuration based on the latest trends and be
 
 ## 🚀 Installation
 
-The configuration is already set up in `~/.config/nvim/`. When you first start Neovim, it will:
+### Prerequisites
 
-1. Automatically bootstrap lazy.nvim
-2. Install all plugins
-3. Set up LSP servers via Mason
-4. Configure syntax highlighting with Treesitter
+- **Neovim**: v0.10.0 or higher
+- **Git**: For plugin management
+- **Node.js**: v16+ (for many LSP servers and tools)
+- **Python 3**: For Python development and some tools
+- **ripgrep**: For fast searching (required)
+- **fd**: For file finding (optional but recommended)
+- **A Nerd Font**: For icons and symbols (recommended: JetBrainsMono Nerd Font)
+
+### Quick Install
+
+1. **Backup your existing configuration** (if any):
+   ```bash
+   mv ~/.config/nvim ~/.config/nvim.backup
+   ```
+
+2. **Clone this configuration**:
+   ```bash
+   git clone https://github.com/ncls-p/nvim-config ~/.config/nvim
+   ```
+
+3. **Start Neovim**:
+   ```bash
+   nvim
+   ```
+
+   On first launch, the configuration will:
+   - Bootstrap lazy.nvim plugin manager
+   - Install all plugins automatically
+   - Install LSP servers via Mason
+   - Download and configure Treesitter parsers
+   - Set up the theme collection
+
+### Platform-Specific Instructions
+
+#### macOS
+```bash
+# Install prerequisites
+brew install neovim ripgrep fd node python@3.12
+
+# Install a Nerd Font
+brew tap homebrew/cask-fonts
+brew install --cask font-jetbrains-mono-nerd-font
+```
+
+#### Ubuntu/Debian
+```bash
+# Add Neovim PPA for latest version
+sudo add-apt-repository ppa:neovim-ppa/unstable
+sudo apt update
+
+# Install prerequisites
+sudo apt install neovim ripgrep fd-find nodejs npm python3 python3-pip
+
+# Install a Nerd Font manually from:
+# https://www.nerdfonts.com/font-downloads
+```
+
+#### Arch Linux
+```bash
+# Install prerequisites
+sudo pacman -S neovim ripgrep fd nodejs npm python python-pip
+
+# Install a Nerd Font
+yay -S ttf-jetbrains-mono-nerd
+```
+
+### Post-Installation
+
+1. **Check health**:
+   ```vim
+   :checkhealth
+   ```
+
+2. **Install additional tools** (optional):
+   ```bash
+   # Lazygit for git integration
+   brew install lazygit  # macOS
+   # or see: https://github.com/jesseduffield/lazygit#installation
+   
+   # Claude Code CLI for AI assistance
+   # See: https://docs.anthropic.com/en/docs/claude-code
+   ```
+
+3. **Sync plugins** (if needed):
+   ```vim
+   :Lazy sync
+   ```
 
 ## 📁 Structure
 
 ```
 ~/.config/nvim/
 ├── init.lua                    # Entry point with lazy.nvim bootstrap
+├── lazy-lock.json              # Plugin version lock file
+├── CLAUDE.md                   # Instructions for Claude Code AI
 ├── lua/
-│   ├── config/
+│   ├── config/                 # Core configuration
 │   │   ├── autocmds.lua        # Auto commands
-│   │   ├── keymaps.lua         # Key mappings  
-│   │   ├── options.lua         # Vim options
+│   │   ├── keymaps.lua         # Global key mappings  
+│   │   ├── options.lua         # Neovim options
+│   │   ├── theme-init.lua      # Theme initialization
 │   │   └── util.lua            # Utility functions
-│   └── plugins/
-│       ├── blink-cmp.lua       # Modern completion engine
-│       ├── bufferline.lua      # Modern buffer/tab management
-│       ├── claude-code.lua     # AI coding assistant
-│       ├── coding.lua          # Snippets, text objects, etc.
-│       ├── colorscheme.lua     # Themes (Tokyo Night, Catppuccin)
-│       ├── editor.lua          # File management, search, which-key
-│       ├── enhanced-editing.lua # Advanced editing tools
+│   └── plugins/                # Plugin specifications (23 modules)
 │       ├── lsp.lua             # LSP configuration with Mason
-│       ├── mini.lua            # Mini.icons for modern icons
-│       ├── smooth-scroll.lua   # Smooth scrolling with cinnamon.nvim
-│       ├── terminal.lua        # Terminal management with toggleterm.nvim
-│       ├── theme-manager.lua   # Modern theme management with colorbox.nvim
+│       ├── blink-cmp.lua       # Modern completion engine
+│       ├── editor.lua          # Telescope, Neo-tree, Oil.nvim
+│       ├── terminal.lua        # Terminal management
+│       ├── ui.lua              # UI enhancements
+│       ├── git.lua             # Git integration
 │       ├── treesitter.lua      # Syntax highlighting
-│       └── ui.lua              # Status line, notifications, dashboard
+│       ├── theme-manager.lua   # 800+ theme collection
+│       ├── claude-code.lua     # Claude Code integration
+│       └── ...                 # Other specialized modules
 └── README.md                   # This documentation
 ```
 
 ## 🔧 Customization
 
-### Setting up Claude Code CLI Integration
-1. Ensure you have the Claude Code CLI installed and available in your PATH
-2. The plugin will automatically open Claude Code in a terminal window
-3. File changes made by Claude Code are automatically detected and reloaded
+### Claude Code CLI Integration
+
+1. **Install Claude Code CLI**:
+   ```bash
+   # Visit: https://docs.anthropic.com/en/docs/claude-code
+   # Follow installation instructions for your platform
+   ```
+
+2. **Verify installation**:
+   ```bash
+   claude --version
+   ```
+
+3. **Usage in Neovim**:
+   - `<leader>cc` - Open Claude Code in floating terminal
+   - `<leader>cC` - Continue previous conversation
+   - `<leader>cV` - Verbose mode
+   - File changes are automatically detected and buffers refreshed
 
 ### Adding LSP Servers
-Edit `lua/plugins/lsp.lua` and add servers to the `ensure_installed` list in Mason configuration.
+
+1. **Via Mason UI** (recommended):
+   ```vim
+   :Mason
+   ```
+   Then press `i` on any server to install.
+
+2. **Via configuration**:
+   Edit `lua/plugins/lsp.lua` and add to the `servers` table:
+   ```lua
+   opts.servers.rust_analyzer = {
+     settings = {
+       ["rust-analyzer"] = {
+         -- server-specific settings
+       }
+     }
+   }
+   ```
 
 ### Managing Themes
 - Run `<leader>uc` to shuffle through high-quality themes
@@ -184,20 +297,79 @@ Create new plugin specifications in the appropriate file under `lua/plugins/` or
 
 ## 🎯 Performance
 
-This configuration is optimized for fast startup times through:
-- Lazy loading of plugins
-- Minimal core configuration
-- Efficient plugin selection
-- Disabled unused built-in plugins
+This configuration is optimized for fast startup times:
 
-First startup may take longer due to plugin installation, but subsequent starts should be very fast.
+- **Startup time**: ~50-100ms (after initial setup)
+- **Lazy loading**: Plugins load only when needed
+- **Minimal core**: Only essential plugins at startup
+- **Disabled builtins**: Unnecessary Neovim plugins disabled
 
-## 📖 Learning
+### Performance Tips
 
-- Use `<leader>fh` to search help tags
-- `<leader>fk` to browse keymaps
-- `:Lazy` to manage plugins
-- `:Mason` to manage LSP servers
-- Press `<leader>` and wait to see available bindings
+1. **Profile startup**:
+   ```vim
+   :Lazy profile
+   ```
 
-Enjoy your modern Neovim setup! 🎉
+2. **Check loaded plugins**:
+   ```vim
+   :Lazy
+   ```
+
+3. **Debug slow operations**:
+   ```vim
+   :lua vim.cmd('profile start profile.log')
+   :lua vim.cmd('profile func *')
+   :lua vim.cmd('profile file *')
+   " Do some operations
+   :lua vim.cmd('profile stop')
+   ```
+
+## 🆘 Troubleshooting
+
+### Common Issues
+
+1. **Icons not displaying**:
+   - Install a Nerd Font and configure your terminal to use it
+
+2. **LSP not working**:
+   ```vim
+   :LspInfo
+   :LspLog
+   :Mason
+   ```
+
+3. **Plugins not loading**:
+   ```vim
+   :Lazy sync
+   :Lazy clean
+   ```
+
+4. **Performance issues**:
+   ```vim
+   :checkhealth
+   :Lazy profile
+   ```
+
+### Getting Help
+
+- **Built-in help**: `<leader>fh` to search help tags
+- **Keybindings**: `<leader>fk` to browse all keymaps
+- **Which-key**: Press `<leader>` and wait for hints
+- **Plugin info**: `:Lazy` to see all plugins
+- **LSP status**: `:LspInfo` for current buffer
+
+## 📖 Resources
+
+- [Neovim Documentation](https://neovim.io/doc/)
+- [lazy.nvim Guide](https://github.com/folke/lazy.nvim)
+- [Mason LSP Registry](https://mason-registry.dev/registry/list)
+- [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code)
+
+## 🤝 Contributing
+
+Feel free to submit issues, fork the repository, and create pull requests for any improvements.
+
+---
+
+Enjoy your modern Neovim setup! 🚀

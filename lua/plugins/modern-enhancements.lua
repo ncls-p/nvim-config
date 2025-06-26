@@ -216,12 +216,18 @@ return {
         return
       end
 
-      -- Add autocmd to handle buffer deletion
-      vim.api.nvim_create_autocmd("BufDelete", {
-        callback = function()
+      -- Add autocmd to handle buffer deletion safely
+      vim.api.nvim_create_autocmd({ "BufDelete", "BufWipeout" }, {
+        callback = function(event)
           -- Clear scrollbar handlers for deleted buffers
           pcall(function()
-            require("scrollbar.handlers").clear()
+            local handlers = require("scrollbar.handlers")
+            if handlers.diagnostic then
+              handlers.diagnostic.clear(event.buf)
+            end
+            if handlers.gitsigns then
+              handlers.gitsigns.clear(event.buf)
+            end
           end)
         end,
       })
@@ -364,13 +370,7 @@ return {
         },
         handlers = {
           cursor = true,
-          diagnostic = {
-            enable = true,
-            -- Add safety check for valid buffers
-            should_enable = function(bufnr)
-              return vim.api.nvim_buf_is_valid(bufnr)
-            end,
-          },
+          diagnostic = true,
           gitsigns = true,
           handle = true,
           search = false, -- Requires hlslens

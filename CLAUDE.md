@@ -9,108 +9,134 @@ This is a modern Neovim configuration (2025) located at `~/.config/nvim/`. The c
 ### Key Commands
 
 **Plugin Management:**
-- `:Lazy` - Open lazy.nvim plugin manager
+- `:Lazy` - Open lazy.nvim plugin manager (install/update/sync plugins)
+- `:Lazy sync` - Sync all plugins to match lazy-lock.json
 - `:Mason` - Open Mason LSP server manager
-- `:LspInfo` - Show LSP server information
+- `:LspInfo` - Show LSP server information for current buffer
+- `:LspLog` - View LSP log for debugging
 
-**Claude Code Integration:**
-- `<C-,>` - Toggle Claude Code terminal (default keymap)
-- `<leader>cC` - Continue conversation (default keymap)
-- `<leader>cV` - Verbose mode (default keymap)
-- Commands: `:ClaudeCode`, `:ClaudeCodeContinue`, `:ClaudeCodeVerbose`
-- Claude Code path: `/opt/homebrew/bin/claude`
-
-**Development Tools:**
-- `:Telescope` - Access fuzzy finder functionality
-- `:ConformInfo` - Show code formatting information
+**Code Actions & Formatting:**
 - `<leader>cf` - Format code using conform.nvim
-- `<leader>gg` - Open Lazygit
+- `<leader>ca` - Code actions (LSP)
+- `<leader>cr` - Rename symbol
+- `:ConformInfo` - Show active formatters for current buffer
 
-**Terminal Management:**
+**Navigation & Search:**
+- `:Telescope` - Main telescope command
+- `<leader>ff` - Find files
+- `<leader>fg` - Live grep in project
+- `<leader>fb` - Search buffers
+- `<leader>fh` - Search help tags
+- `<leader>fs` - Search symbols (LSP)
+
+**Terminal & Tools:**
 - `<Ctrl+\>` - Toggle floating terminal
-- `<leader>tf` - Toggle floating terminal
-- `<leader>th` - Toggle horizontal terminal
-- `<leader>tv` - Toggle vertical terminal
+- `<leader>gg` - Open Lazygit
+- `:ClaudeCode` - Open Claude Code terminal
+- Claude Code path: `/opt/homebrew/bin/claude`
 
 ## Architecture Overview
 
-### Core Structure
-- **Entry Point**: `init.lua` - Bootstraps lazy.nvim and loads core configuration
-- **Configuration**: `lua/config/` - Core Neovim settings, keymaps, autocmds, utilities
-- **Plugins**: `lua/plugins/` - Modular plugin specifications organized by function
+### Directory Structure
+```
+~/.config/nvim/
+├── init.lua                 # Entry point, bootstraps lazy.nvim
+├── lazy-lock.json          # Plugin version lock file
+└── lua/
+    ├── config/             # Core configuration
+    │   ├── autocmds.lua   # Auto commands
+    │   ├── keymaps.lua    # Global keybindings
+    │   ├── options.lua    # Neovim options
+    │   ├── theme-init.lua # Theme initialization
+    │   └── util.lua       # Utility functions (LSP, UI, etc.)
+    └── plugins/           # Plugin specifications (23 modules)
+        ├── lsp.lua        # LSP + Mason configuration
+        ├── blink-cmp.lua  # Completion engine
+        ├── editor.lua     # File management (Telescope, Neo-tree, Oil)
+        ├── terminal.lua   # Terminal integration
+        └── ...            # Other plugin groups
+```
 
-### Plugin Architecture
-The configuration uses a modular approach with plugins organized into logical groups:
+### Core Components
 
-- **LSP & Completion**: Native LSP with Mason, blink.cmp for completion
-- **Editor**: Telescope (fuzzy finder), Neo-tree (file explorer), Oil.nvim (buffer-based file ops)
-- **UI**: Lualine (status line), Bufferline (buffer tabs), Dashboard, Noice (enhanced UI)
-- **Terminal**: ToggleTerm with predefined terminal instances
-- **Git**: Gitsigns, Diffview, Git-conflict for merge resolution
-- **Themes**: colorbox.nvim for automatic theme collection and management
-- **Navigation**: Flash.nvim for quick jumping
-- **AI Integration**: Custom Claude Code plugin for terminal integration
+**LSP Setup (`lua/plugins/lsp.lua`):**
+- Mason auto-installs LSP servers defined in `opts.servers`
+- Servers: lua_ls, ts_ls, pyright, jsonls, html, cssls, and more
+- Custom per-server configurations supported
+- Integrated with blink.cmp for completion
+- Conform.nvim handles formatting with LSP fallback
 
-### LSP Configuration
-- **Server Management**: Mason auto-installs and manages LSP servers
-- **Essential Servers**: lua_ls, ts_ls, pyright, jsonls, html, cssls
-- **Capabilities**: Integrated with blink.cmp for completion
-- **Formatting**: Uses conform.nvim with LSP fallback
-- **Border Style**: Rounded borders configured globally for all floating windows
+**Plugin Loading Strategy:**
+- Lazy loading via events: `BufReadPre`, `BufNewFile`, `VeryLazy`
+- Command-based loading for tools like Telescope, Mason
+- Key-based loading for mapped functionalities
+- Minimal plugins loaded at startup for performance
 
-### Theme System
-- **Theme Manager**: colorbox.nvim automatically downloads and manages 800+ themes
-- **Pre-configured**: 10 premium themes (Tokyo Night, Catppuccin, Kanagawa, etc.)
-- **Quality Filter**: Only includes themes with 800+ GitHub stars
-- **Theme Switching**: `<leader>uc` to shuffle, `<leader>uC` to select from list
-
-### Terminal Integration
-- **Claude Code**: Custom plugin with file change detection and auto-refresh
-- **ToggleTerm**: Multiple terminal instances (floating, horizontal, vertical)
-- **Special Terminals**: Lazygit, Node REPL, Python REPL, Claude Code variants
-- **Navigation**: Seamless window navigation from terminal mode
-
-### Configuration Management
-- **Leader Key**: Space (`<Space>`)
-- **Lazy Loading**: Plugins load on demand for fast startup
-- **Performance**: Disabled unnecessary built-in plugins
-- **Auto-commands**: Smart file handling, highlight on yank, auto-directory creation
-- **Utilities**: Extensive utility functions in `lua/config/util.lua`
-
-## Key Files
-
-- `init.lua` - Entry point with lazy.nvim bootstrap
-- `lua/config/options.lua` - Neovim options and UI settings
-- `lua/config/keymaps.lua` - Global keybindings
-- `lua/config/util.lua` - Utility functions for LSP, formatting, UI helpers
-- `lua/plugins/lsp.lua` - LSP configuration with Mason integration
-- `lua/plugins/claude-code.lua` - Claude Code CLI integration
-- `lua/plugins/terminal.lua` - Terminal management with ToggleTerm
-- `lua/plugins/editor.lua` - Core editing plugins (Telescope, Neo-tree, etc.)
+**Theme System (`lua/plugins/theme-manager.lua`):**
+- colorbox.nvim manages 800+ themes
+- Quality filter: only themes with 800+ GitHub stars
+- Theme commands: `<leader>uc` (shuffle), `<leader>uC` (select)
+- Pre-configured premium themes in `lua/plugins/themes.lua`
 
 ## Configuration Patterns
 
-### Plugin Specification
-Plugins follow lazy.nvim spec with:
-- Lazy loading using `event`, `cmd`, `keys`, or `ft`
-- Dependencies explicitly listed
-- Configuration in `config` function or `opts` table
-- Keymaps defined in `keys` table for automatic lazy loading
+### Adding New Plugins
+Create a new file in `lua/plugins/` or add to existing category:
+```lua
+return {
+  {
+    "author/plugin-name",
+    event = "VeryLazy",  -- or specific events/commands
+    dependencies = { "dep/name" },
+    opts = {
+      -- plugin options
+    },
+    config = function(_, opts)
+      -- setup code
+    end,
+    keys = {
+      { "<leader>xx", "<cmd>PluginCommand<cr>", desc = "Description" },
+    },
+  },
+}
+```
 
-### LSP Setup
-- Servers defined in `opts.servers` table
-- Mason automatically installs servers
-- Capabilities merged with completion engine
-- Custom setup functions supported per server
+### LSP Server Addition
+Add to `lua/plugins/lsp.lua` in the servers table:
+```lua
+opts.servers.new_server = {
+  settings = {
+    -- server-specific settings
+  },
+}
+```
 
-### Keymap Organization
-- Core keymaps in `lua/config/keymaps.lua`
-- Plugin-specific keymaps in plugin specs
-- Consistent `<leader>` prefix organization
-- Which-key integration for keymap discovery
+### Keymap Conventions
+- Leader key: `<Space>`
+- Local leader: `\`
+- Plugin keymaps in plugin spec `keys` table
+- Global keymaps in `lua/config/keymaps.lua`
+- Consistent prefixes: `<leader>f` (find), `<leader>g` (git), `<leader>c` (code), `<leader>u` (UI)
 
-### Theme Integration
-- colorbox.nvim handles theme discovery and installation
-- Themes filtered by quality (star count)
-- Automatic fallback to built-in themes
-- Theme persistence across restarts
+### Utility Functions
+Available in `lua/config/util.lua`:
+- `get_lsp_config()` - LSP configuration helpers
+- `format_toggle()` - Toggle auto-formatting
+- `diagnostics_toggle()` - Toggle diagnostics
+- UI helpers for borders, icons, and highlighting
+
+## Development Workflow
+
+1. **Adding Features**: Create new plugin specs in `lua/plugins/`
+2. **Modifying Options**: Edit `lua/config/options.lua`
+3. **Custom Commands**: Add to `lua/config/autocmds.lua`
+4. **Debugging**: Check `:messages`, `:LspLog`, `:Lazy log`
+5. **Performance**: Use `:Lazy profile` to check startup times
+
+## Important Notes
+
+- The configuration auto-installs missing plugins and LSP servers on first run
+- lazy-lock.json ensures consistent plugin versions across installations
+- Rounded borders are configured globally for unified UI
+- File operations use Oil.nvim for buffer-based editing
+- Terminal mode navigation uses `<C-h/j/k/l>` for consistency
