@@ -17,7 +17,7 @@ return {
       { "K", vim.lsp.buf.hover, desc = "Hover" },
       { "gK", vim.lsp.buf.signature_help, desc = "Signature Help" },
       { "<c-k>", vim.lsp.buf.signature_help, mode = "i", desc = "Signature Help" },
-      { "<leader>ca", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "v" } },
+      { "<leader>ca", function() require("tiny-code-action").code_action() end, desc = "Code Action", mode = { "n", "v" } },
       {
         "<leader>cA",
         function()
@@ -68,11 +68,23 @@ return {
         lua_ls = {
           settings = {
             Lua = {
+              runtime = {
+                version = "LuaJIT",
+              },
+              diagnostics = {
+                globals = { "vim" },
+              },
               workspace = {
                 checkThirdParty = false,
+                library = {
+                  vim.env.VIMRUNTIME,
+                },
               },
               completion = {
                 callSnippet = "Replace",
+              },
+              telemetry = {
+                enable = false,
               },
             },
           },
@@ -96,7 +108,7 @@ return {
       require("config.util").lsp.setup()
       require("config.util").lsp.on_dynamic_capability(require("config.util").lsp.keymaps.on_attach)
 
-      require("config.util").lsp.words.setup(opts.document_highlight)
+      require("config.util").lsp.words.setup()
 
       if opts.inlay_hints.enabled then
         require("config.util").lsp.inlay_hints.setup()
@@ -119,7 +131,7 @@ return {
         vim.lsp.protocol.make_client_capabilities(),
         opts.capabilities or {}
       )
-      
+
       -- Add blink.cmp capabilities if available
       local has_blink, blink = pcall(require, "blink.cmp")
       if has_blink and blink.get_lsp_capabilities then
@@ -151,7 +163,7 @@ return {
             ensure_installed[#ensure_installed + 1] = server
           end
         end
-        
+
         mlsp.setup({
           ensure_installed = ensure_installed,
           handlers = { setup },
@@ -211,6 +223,41 @@ return {
       else
         ensure_installed()
       end
+    end,
+  },
+
+  -- Tiny Code Action - Better UI for code actions
+  {
+    "rachartier/tiny-code-action.nvim",
+    dependencies = {
+      { "nvim-lua/plenary.nvim" },
+      { "nvim-telescope/telescope.nvim" },
+    },
+    event = "LspAttach",
+    config = function()
+      require("tiny-code-action").setup({
+        backend = "vim",
+        picker = "telescope",
+        telescope_opts = {
+          layout_strategy = "vertical",
+          layout_config = {
+            width = 0.7,
+            height = 0.9,
+            preview_cutoff = 1,
+            preview_height = function(_, _, max_lines)
+              local h = math.floor(max_lines * 0.5)
+              return math.max(h, 10)
+            end,
+          },
+        },
+        signs = {
+          quickfix = { "󰁨", { link = "DiagnosticWarning" } },
+          refactor = { "󰊕", { link = "DiagnosticInfo" } },
+          source = { "", { link = "DiagnosticInfo" } },
+          combined = { "󰌵", { link = "DiagnosticInfo" } },
+          user = { "", { link = "DiagnosticInfo" } },
+        },
+      })
     end,
   },
 

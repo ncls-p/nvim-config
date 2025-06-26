@@ -78,6 +78,9 @@ map("v", ">", ">gv")
 -- lazy
 map("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
 
+-- clipboard diagnostic
+map("n", "<leader>hc", "<cmd>checkhealth clipboard<cr>", { desc = "Check clipboard health" })
+
 -- new file
 map("n", "<leader>fn", "<cmd>enew<cr>", { desc = "New File" })
 
@@ -95,10 +98,26 @@ end, { desc = "Format" })
 
 -- diagnostic
 local diagnostic_goto = function(next, severity)
-  local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
-  severity = severity and vim.diagnostic.severity[severity] or nil
   return function()
-    go({ severity = severity })
+    local count = next and 1 or -1
+    local sev = severity and vim.diagnostic.severity[severity] or nil
+
+    -- Check if there are any diagnostics before jumping
+    local diagnostics = vim.diagnostic.get(0, sev and { severity = sev } or nil)
+    if #diagnostics == 0 then
+      vim.notify("No diagnostics found", vim.log.levels.INFO)
+      return
+    end
+
+    -- Use pcall to handle any errors gracefully
+    local ok, err = pcall(vim.diagnostic.jump, {
+      count = count,
+      severity = sev
+    })
+
+    if not ok then
+      vim.notify("No more diagnostics in that direction", vim.log.levels.INFO)
+    end
   end
 end
 map("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
@@ -198,7 +217,7 @@ end, { desc = "🎨 Theme picker with live preview" })
 local theme_index = 1
 local favorite_themes = {
   "tokyonight-night",
-  "catppuccin-mocha", 
+  "catppuccin-mocha",
   "rose-pine",
   "kanagawa-wave",
   "onedark",
@@ -219,7 +238,7 @@ end, { desc = "🔄 Quick theme toggle" })
 -- 🔍 Telescope colorscheme picker (always available)
 map("n", "<leader>uc", function()
   local ok, _ = pcall(function()
-    require("telescope.builtin").colorscheme({ 
+    require("telescope.builtin").colorscheme({
       enable_preview = true,
       ignore_builtins = true,
     })
@@ -231,3 +250,4 @@ map("n", "<leader>uc", function()
 end, { desc = "🔍 Telescope theme picker" })
 
 map("n", "<leader>uw", function() require('window-picker').pick_window() end, { desc = "🧺 Pick window" })
+

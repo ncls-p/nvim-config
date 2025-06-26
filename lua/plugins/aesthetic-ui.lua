@@ -83,17 +83,17 @@ return {
         function()
           -- Enhanced buffer checks for tree-sitter compatibility
           local excluded_filetypes = {
-            "", "dashboard", "alpha", "neo-tree", "NvimTree", "oil", 
+            "", "dashboard", "alpha", "neo-tree", "NvimTree", "oil",
             "trouble", "Trouble", "lazy", "mason", "notify", "toggleterm",
             "lazyterm", "help", "qf", "quickfix", "TelescopePrompt",
             "TelescopeResults", "which-key", "noice", "starter"
           }
-          
+
           if vim.tbl_contains(excluded_filetypes, vim.bo.filetype) then
             vim.notify("🌧️ Open a code file to see the rain animation!", vim.log.levels.INFO)
             return
           end
-          
+
           vim.cmd("CellularAutomaton make_it_rain")
         end,
         desc = "Make it rain ☔"
@@ -103,17 +103,17 @@ return {
         function()
           -- Enhanced buffer checks for tree-sitter compatibility
           local excluded_filetypes = {
-            "", "dashboard", "alpha", "neo-tree", "NvimTree", "oil", 
+            "", "dashboard", "alpha", "neo-tree", "NvimTree", "oil",
             "trouble", "Trouble", "lazy", "mason", "notify", "toggleterm",
             "lazyterm", "help", "qf", "quickfix", "TelescopePrompt",
             "TelescopeResults", "which-key", "noice", "starter"
           }
-          
+
           if vim.tbl_contains(excluded_filetypes, vim.bo.filetype) then
             vim.notify("🧬 Open a code file to see the Game of Life!", vim.log.levels.INFO)
             return
           end
-          
+
           vim.cmd("CellularAutomaton game_of_life")
         end,
         desc = "Game of Life 🧬"
@@ -127,8 +127,8 @@ return {
     event = "VeryLazy",
     config = function()
       require('neoscroll').setup({
-        mappings = {'<C-u>', '<C-d>', '<C-b>', '<C-f>',
-                    '<C-y>', '<C-e>', 'zt', 'zz', 'zb'},
+        mappings = { '<C-u>', '<C-d>', '<C-b>', '<C-f>',
+          '<C-y>', '<C-e>', 'zt', 'zz', 'zb' },
         hide_cursor = true,
         stop_eof = true,
         respect_scrolloff = false,
@@ -286,3 +286,4 @@ return {
     },
   },
 }
+

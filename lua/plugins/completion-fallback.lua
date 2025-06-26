@@ -10,7 +10,7 @@ return {
     enabled = false, -- Disabled by default, enable if needed
     config = function()
       local cmp = require("cmp")
-      
+
       -- `/` cmdline setup.
       cmp.setup.cmdline("/", {
         mapping = cmp.mapping.preset.cmdline(),
@@ -18,7 +18,7 @@ return {
           { name = "buffer" }
         }
       })
-      
+
       -- `:` cmdline setup.
       cmp.setup.cmdline(":", {
         mapping = cmp.mapping.preset.cmdline(),
@@ -36,3 +36,4 @@ return {
     end,
   },
 }
+

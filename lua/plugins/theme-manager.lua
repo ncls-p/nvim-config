@@ -18,14 +18,14 @@ return {
         vim.cmd.colorscheme("tokyonight")
         return
       end
-      
+
       -- Simple setup first
       colorbox.setup({
         -- Start with minimal config
         timing = "startup",
         policy = "shuffle",
       })
-      
+
       -- Set initial colorscheme
       vim.schedule(function()
         local colors = { "tokyonight", "kanagawa", "catppuccin", "nightfox" }
@@ -56,7 +56,7 @@ return {
         function()
           -- Simple colorscheme picker
           local colors = { "tokyonight", "kanagawa", "catppuccin", "nightfox", "rose-pine", "onedark", "gruvbox", "nord" }
-          
+
           vim.ui.select(colors, {
             prompt = "Select colorscheme:",
           }, function(choice)
@@ -70,7 +70,7 @@ return {
       },
     },
   },
-  
+
   -- Alternative lightweight theme switcher with live preview
   {
     "zaldih/themery.nvim",
@@ -100,3 +100,4 @@ return {
     },
   },
 }
+

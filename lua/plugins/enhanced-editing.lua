@@ -4,7 +4,7 @@ return {
     "stevearc/oil.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     keys = {
-      { "<leader>o", "<cmd>Oil<cr>", desc = "Open Oil" },
+      { "<leader>o", "<cmd>Oil<cr>",         desc = "Open Oil" },
       { "<leader>O", "<cmd>Oil --float<cr>", desc = "Open Oil (Float)" },
     },
     opts = {
@@ -264,12 +264,12 @@ return {
       })
     end,
     keys = {
-      { "<leader>gco", "<cmd>GitConflictChooseOurs<cr>", desc = "Choose Ours" },
+      { "<leader>gco", "<cmd>GitConflictChooseOurs<cr>",   desc = "Choose Ours" },
       { "<leader>gct", "<cmd>GitConflictChooseTheirs<cr>", desc = "Choose Theirs" },
-      { "<leader>gcb", "<cmd>GitConflictChooseBoth<cr>", desc = "Choose Both" },
-      { "<leader>gc0", "<cmd>GitConflictChooseNone<cr>", desc = "Choose None" },
-      { "]x", "<cmd>GitConflictNextConflict<cr>", desc = "Next Conflict" },
-      { "[x", "<cmd>GitConflictPrevConflict<cr>", desc = "Prev Conflict" },
+      { "<leader>gcb", "<cmd>GitConflictChooseBoth<cr>",   desc = "Choose Both" },
+      { "<leader>gc0", "<cmd>GitConflictChooseNone<cr>",   desc = "Choose None" },
+      { "]x",          "<cmd>GitConflictNextConflict<cr>", desc = "Next Conflict" },
+      { "[x",          "<cmd>GitConflictPrevConflict<cr>", desc = "Prev Conflict" },
     },
   },
 
@@ -278,9 +278,9 @@ return {
     "sindrets/diffview.nvim",
     cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles", "DiffviewFocusFiles" },
     keys = {
-      { "<leader>gd", "<cmd>DiffviewOpen<cr>", desc = "Open Diffview" },
-      { "<leader>gD", "<cmd>DiffviewClose<cr>", desc = "Close Diffview" },
-      { "<leader>gh", "<cmd>DiffviewFileHistory<cr>", desc = "File History" },
+      { "<leader>gd", "<cmd>DiffviewOpen<cr>",          desc = "Open Diffview" },
+      { "<leader>gD", "<cmd>DiffviewClose<cr>",         desc = "Close Diffview" },
+      { "<leader>gh", "<cmd>DiffviewFileHistory<cr>",   desc = "File History" },
       { "<leader>gH", "<cmd>DiffviewFileHistory %<cr>", desc = "Current File History" },
     },
     opts = {
@@ -437,3 +437,4 @@ return {
     },
   },
 }
+

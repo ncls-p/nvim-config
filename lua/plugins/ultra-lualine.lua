@@ -55,7 +55,7 @@ return {
         if #clients == 0 then
           return "󰅞 No LSP"
         end
-        
+
         local client_names = {}
         for _, client in ipairs(clients) do
           table.insert(client_names, client.name)
@@ -87,7 +87,7 @@ return {
       local function file_size()
         local size = vim.fn.getfsize(vim.fn.expand("%"))
         if size < 0 then return "" end
-        local suffixes = {"B", "KB", "MB", "GB"}
+        local suffixes = { "B", "KB", "MB", "GB" }
         local i = 1
         while size > 1024 and i < #suffixes do
           size = size / 1024
@@ -117,7 +117,7 @@ return {
         options = {
           theme = "auto",
           globalstatus = true,
-          disabled_filetypes = { 
+          disabled_filetypes = {
             statusline = { "dashboard", "alpha", "starter", "snacks_dashboard" },
           },
           section_separators = separators,
@@ -302,11 +302,11 @@ return {
         tabline = {},
         winbar = {},
         inactive_winbar = {},
-        extensions = { 
-          "neo-tree", 
-          "lazy", 
-          "toggleterm", 
-          "mason", 
+        extensions = {
+          "neo-tree",
+          "lazy",
+          "toggleterm",
+          "mason",
           "trouble",
           "quickfix",
         },
@@ -368,3 +368,4 @@ return {
     end,
   },
 }
+

@@ -73,7 +73,8 @@ function M.format.toggle(buf)
     M.format.enabled = not M.format.enabled
   end
   vim.notify(
-    string.format("Auto format %s %s", M.format.enabled and "enabled" or "disabled", buf_local and "(buffer)" or "(global)")
+    string.format("Auto format %s %s", M.format.enabled and "enabled" or "disabled",
+      buf_local and "(buffer)" or "(global)")
   )
 end
 
@@ -115,13 +116,13 @@ function M.toggle_number()
 end
 
 function M.toggle_diagnostics()
-  local enabled = vim.diagnostic.is_disabled()
+  local enabled = vim.diagnostic.is_enabled()
   if enabled then
-    vim.diagnostic.enable()
-    vim.notify("Diagnostics enabled")
-  else
-    vim.diagnostic.disable()
+    vim.diagnostic.enable(false)
     vim.notify("Diagnostics disabled")
+  else
+    vim.diagnostic.enable(true)
+    vim.notify("Diagnostics enabled")
   end
 end
 
@@ -197,7 +198,7 @@ function M.lsp.formatter()
       local clients = vim.lsp.get_clients({ bufnr = buf })
       local ret = {}
       for _, client in ipairs(clients) do
-        if client.supports_method("textDocument/formatting") then
+        if client.supports_method("textDocument/formatting", { bufnr = buf }) then
           table.insert(ret, client.name)
         end
       end
@@ -249,7 +250,7 @@ end
 function M.lsp.on_rename(from, to)
   local clients = vim.lsp.get_clients()
   for _, client in ipairs(clients) do
-    if client.supports_method("workspace/willRenameFiles") then
+    if client.supports_method("workspace/willRenameFiles", { bufnr = 0 }) then
       local resp = client.request_sync("workspace/willRenameFiles", {
         files = {
           {
@@ -416,3 +417,4 @@ function M.mini.ai_whichkey(opts)
 end
 
 return M
+

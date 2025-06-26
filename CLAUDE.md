@@ -14,9 +14,11 @@ This is a modern Neovim configuration (2025) located at `~/.config/nvim/`. The c
 - `:LspInfo` - Show LSP server information
 
 **Claude Code Integration:**
-- `<leader>cc` - Open Claude Code in floating terminal
-- `<leader>cC` - Open Claude Code with --continue flag
-- Claude Code path: `/Users/ncls/.claude/local/claude`
+- `<C-,>` - Toggle Claude Code terminal (default keymap)
+- `<leader>cC` - Continue conversation (default keymap)
+- `<leader>cV` - Verbose mode (default keymap)
+- Commands: `:ClaudeCode`, `:ClaudeCodeContinue`, `:ClaudeCodeVerbose`
+- Claude Code path: `/opt/homebrew/bin/claude`
 
 **Development Tools:**
 - `:Telescope` - Access fuzzy finder functionality

@@ -1,13 +1,13 @@
 return {
   -- 🎨 Ultimate 2025 theme collection - Most popular & trending themes
-  
+
   -- 🌸 Rose Pine - Soho vibes
   {
     "rose-pine/neovim",
     name = "rose-pine",
     priority = 1000,
     opts = {
-      variant = "auto", -- auto, main, moon, dawn
+      variant = "auto",      -- auto, main, moon, dawn
       dark_variant = "main", -- main, moon, dawn
       dim_inactive_windows = false,
       extend_background_behind_borders = true,
@@ -282,7 +282,7 @@ return {
     "sainnhe/gruvbox-material",
     priority = 1000,
     config = function()
-      vim.g.gruvbox_material_background = 'hard' -- soft, medium, hard
+      vim.g.gruvbox_material_background = 'hard'     -- soft, medium, hard
       vim.g.gruvbox_material_foreground = 'material' -- material, mix, original
       vim.g.gruvbox_material_disable_italic_comment = 0
       vim.g.gruvbox_material_enable_italic = 1
@@ -294,7 +294,7 @@ return {
       vim.g.gruvbox_material_menu_selection_background = 'grey'
       vim.g.gruvbox_material_sign_column_background = 'none'
       vim.g.gruvbox_material_spell_foreground = 'none'
-      vim.g.gruvbox_material_ui_contrast = 'low' -- low, high
+      vim.g.gruvbox_material_ui_contrast = 'low'    -- low, high
       vim.g.gruvbox_material_show_eob = 1
       vim.g.gruvbox_material_float_style = 'bright' -- bright, dim
       vim.g.gruvbox_material_diagnostic_text_highlight = 0
@@ -317,7 +317,7 @@ return {
         toggle_style_key = nil,
         toggle_style_list = {
           "iceberg",
-          "campfire", 
+          "campfire",
           "darkforest",
           "roseprime",
         },
@@ -357,7 +357,7 @@ return {
       ending_tildes = false,
       cmp_itemkind_reverse = false,
       toggle_style_key = nil,
-      toggle_style_list = {'dark', 'darker', 'cool', 'deep', 'warm', 'warmer', 'light'},
+      toggle_style_list = { 'dark', 'darker', 'cool', 'deep', 'warm', 'warmer', 'light' },
       code_style = {
         comments = 'italic',
         keywords = 'none',
@@ -471,7 +471,7 @@ return {
     },
   },
 
-  -- 🏯 Solarized Osaka - Clean theme with LSP support  
+  -- 🏯 Solarized Osaka - Clean theme with LSP support
   {
     "craftzdog/solarized-osaka.nvim",
     priority = 1000,
@@ -603,7 +603,7 @@ return {
             colorscheme = "tokyonight-storm"
           },
           {
-            name = "🌕 Tokyo Night - Moon", 
+            name = "🌕 Tokyo Night - Moon",
             colorscheme = "tokyonight-moon"
           },
           {
@@ -619,7 +619,7 @@ return {
             colorscheme = "catppuccin-macchiato"
           },
           {
-            name = "🧊 Catppuccin - Frappe", 
+            name = "🧊 Catppuccin - Frappe",
             colorscheme = "catppuccin-frappe"
           },
           {
@@ -635,7 +635,7 @@ return {
             colorscheme = "kanagawa-dragon"
           },
           {
-            name = "🪷 Kanagawa - Lotus", 
+            name = "🪷 Kanagawa - Lotus",
             colorscheme = "kanagawa-lotus"
           },
           {
@@ -650,7 +650,7 @@ return {
             name = "🌅 Rose Pine - Dawn",
             colorscheme = "rose-pine-dawn"
           },
-          
+
           -- 📈 Most Popular Atom/VS Code Inspired
           {
             name = "📈 OneDark - Dark",
@@ -672,8 +672,8 @@ return {
             name = "🏯 Solarized Osaka",
             colorscheme = "solarized-osaka"
           },
-          
-          -- 🦊 Nightfox Family 
+
+          -- 🦊 Nightfox Family
           {
             name = "🦊 Nightfox",
             colorscheme = "nightfox"
@@ -702,7 +702,7 @@ return {
             name = "❄️  Nordfox",
             colorscheme = "nordfox"
           },
-          
+
           -- 🌲 Nature Inspired
           {
             name = "🌲 Everforest",
@@ -720,7 +720,7 @@ return {
             name = "🌒 Nordic",
             colorscheme = "nordic"
           },
-          
+
           -- 🚀 Modern & Futuristic
           {
             name = "⚫ Oxocarbon",
@@ -748,3 +748,4 @@ return {
     },
   },
 }
+
