@@ -110,6 +110,24 @@ return {
         end,
       })
 
+      -- OpenCode terminal instance
+      local opencode = Terminal:new({
+        cmd = "opencode",
+        direction = "float",
+        float_opts = {
+          border = "rounded",
+          width = function()
+            return math.floor(vim.o.columns * 0.9)
+          end,
+          height = function()
+            return math.floor(vim.o.lines * 0.9)
+          end,
+        },
+        on_open = function(term)
+          vim.cmd("startinsert!")
+        end,
+      })
+
       -- Node.js REPL
       local node = Terminal:new({
         cmd = "node",
@@ -133,6 +151,10 @@ return {
 
       function _CLAUDE_CONTINUE_TOGGLE()
         claude_continue:toggle()
+      end
+
+      function _OPENCODE_TOGGLE()
+        opencode:toggle()
       end
 
       function _NODE_TOGGLE()
@@ -174,6 +196,7 @@ return {
       -- Claude Code terminals
       { "<leader>cc", "<cmd>lua _CLAUDE_DEFAULT_TOGGLE()<CR>",    desc = "Toggle Claude Code" },
       { "<leader>cC", "<cmd>lua _CLAUDE_CONTINUE_TOGGLE()<CR>",   desc = "Toggle Claude Code (Continue)" },
+      { "<leader>co", "<cmd>lua _OPENCODE_TOGGLE()<CR>",          desc = "Toggle OpenCode" },
 
       -- Terminal management
       { "<leader>ta", "<cmd>ToggleTermToggleAll<cr>",             desc = "Toggle all terminals" },
