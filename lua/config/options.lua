@@ -53,10 +53,7 @@ vim.diagnostic.config({
       return d.message
     end,
   },
-  virtual_text = {
-    prefix = "●",
-    spacing = 4,
-  },
+  virtual_text = false,
   signs = true,
   underline = true,
   update_in_insert = false,

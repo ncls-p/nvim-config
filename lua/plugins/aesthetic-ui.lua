@@ -9,6 +9,9 @@ return {
     },
     opts = {
       lsp = {
+        progress = {
+          enabled = false,
+        },
         override = {
           ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
           ["vim.lsp.util.stylize_markdown"] = true,
@@ -26,6 +29,26 @@ return {
             },
           },
           view = "mini",
+        },
+        -- Skip pylsp lint progress messages
+        {
+          filter = {
+            event = "lsp",
+            kind = "progress",
+            cond = function(message)
+              local client = vim.tbl_get(message.opts, "progress", "client")
+              return client == "pylsp"
+            end,
+          },
+          opts = { skip = true },
+        },
+        -- Skip all lint-related notifications
+        {
+          filter = {
+            event = "notify",
+            find = "lint:",
+          },
+          opts = { skip = true },
         },
       },
       presets = {
@@ -71,6 +94,18 @@ return {
       },
       top_down = true
     },
+    config = function(_, opts)
+      require("notify").setup(opts)
+      
+      -- Filter out lint notifications
+      local original_notify = vim.notify
+      vim.notify = function(msg, level, notify_opts)
+        if type(msg) == "string" and msg:match("lint:") then
+          return
+        end
+        return original_notify(msg, level, notify_opts)
+      end
+    end,
   },
 
   -- 🔮 Cellular Automaton - Mind-blowing animations
@@ -274,16 +309,5 @@ return {
     end,
   },
 
-  -- 🔥 Simple fidget for LSP progress
-  {
-    "j-hui/fidget.nvim",
-    opts = {
-      notification = {
-        window = {
-          winblend = 0,
-        },
-      },
-    },
-  },
 }
 

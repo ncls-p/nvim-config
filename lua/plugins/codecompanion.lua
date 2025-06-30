@@ -23,10 +23,22 @@ return {
             },
           })
         end,
+        openwebui = function()
+          return require("codecompanion.adapters").extend("openai_compatible", {
+            env = {
+              url = "https://owebui.nclsp.com",
+              api_key = "sk-0db5bf539cd943d09ba33e3bf066c71c",
+              chat_url = "/api/chat/completions",
+            },
+            schema = {
+              model = { default = "qwen2.5-coder:1.5b-base" },
+            },
+          })
+        end,
       },
       strategies = {
         chat = { adapter = "helix" },
-        inline = { adapter = "helix" },
+        inline = { adapter = "openwebui" },
       },
     },
   },
