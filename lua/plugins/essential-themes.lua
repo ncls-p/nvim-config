@@ -12,7 +12,7 @@ return {
           floats = "dark",
         },
       })
-      vim.cmd.colorscheme("tokyonight-night")
+      -- Don't force colorscheme - let Themery handle persistence
     end,
   },
 

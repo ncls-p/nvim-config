@@ -23,7 +23,7 @@ vim.g.maplocalleader = "\\"
 require("config.options")
 require("config.keymaps")
 require("config.autocmds")
-require("config.theme-init")
+-- require("config.theme-init") -- Disabled - using Themery instead
 
 -- Setup lazy.nvim
 require("lazy").setup({

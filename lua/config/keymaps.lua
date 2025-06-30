@@ -213,27 +213,8 @@ map("n", "<leader>uT", function()
   end
 end, { desc = "🎨 Theme picker with live preview" })
 
--- 🎨 Quick theme toggles
-local theme_index = 1
-local favorite_themes = {
-  "tokyonight-night",
-  "catppuccin-mocha",
-  "rose-pine",
-  "kanagawa-wave",
-  "onedark",
-  "cyberdream",
-  "nord",
-  "nightfox",
-  "everforest",
-  "material"
-}
-
-map("n", "<leader>uq", function()
-  theme_index = theme_index % #favorite_themes + 1
-  local theme = favorite_themes[theme_index]
-  vim.cmd("colorscheme " .. theme)
-  vim.notify("🎨 Switched to: " .. theme, vim.log.levels.INFO)
-end, { desc = "🔄 Quick theme toggle" })
+-- 🔄 Quick theme toggle disabled - using Themery persistence instead
+-- Use <leader>ut for Themery theme picker
 
 -- 🔍 Telescope colorscheme picker (always available)
 map("n", "<leader>uc", function()

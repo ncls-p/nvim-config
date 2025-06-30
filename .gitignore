@@ -1,0 +1,25 @@
+# Environment variables and secrets
+.env
+.env.local
+*.key
+
+# API keys and tokens
+api_keys.lua
+secrets.lua
+
+# Local configuration overrides
+local_config.lua
+
+# Cache and temporary files
+.cache/
+tmp/
+*.tmp
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

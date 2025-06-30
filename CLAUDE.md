@@ -133,6 +133,76 @@ Available in `lua/config/util.lua`:
 4. **Debugging**: Check `:messages`, `:LspLog`, `:Lazy log`
 5. **Performance**: Use `:Lazy profile` to check startup times
 
+## Swift Development Setup
+
+### Prerequisites
+Swift development requires additional tools beyond the LSP server:
+
+1. **SourceKit-LSP**: Comes bundled with Xcode, provides language server functionality
+2. **swiftformat**: Install via Homebrew for code formatting
+   ```bash
+   brew install swiftformat
+   ```
+3. **xcode-build-server** (for iOS/macOS projects): Bridges Xcode projects with LSP
+   ```bash
+   brew install xcode-build-server
+   ```
+
+### Configuration Details
+- **LSP Server**: `sourcekit` is configured in `lua/plugins/lsp.lua:101-111` (manual setup since it's not available via Mason)
+- **Formatting**: swiftformat is configured in conform.nvim
+- **File Settings**: Swift files use 4-space indentation (Apple standard)
+- **Comment String**: `// %s` for proper commenting support
+
+### iOS/macOS Project Setup
+For Xcode-based projects, after installing xcode-build-server:
+
+1. Build your project in Xcode first
+2. In your project root, run:
+   ```bash
+   xcode-build-server config -workspace YourApp.xcworkspace -scheme YourScheme
+   ```
+3. This creates `buildServer.json` that allows sourcekit-lsp to understand your project structure
+4. Open Swift files and verify LSP is attached with `:LspInfo`
+
+### Troubleshooting
+- If LSP doesn't recognize iOS/UIKit symbols, ensure xcode-build-server is configured
+- Rebuild in Xcode and regenerate buildServer.json if dependencies change
+- Check `:LspLog` for sourcekit-lsp error messages
+
+## XML Development Setup
+
+### Overview
+XML support is provided through lemminx LSP server with advanced features:
+- Schema-aware validation and completion
+- Auto-closing tags
+- Symbol navigation
+- Code actions for quick fixes
+- Formatting with xmllint or LSP
+
+### Configuration Details
+- **LSP Server**: `lemminx` configured in `lua/plugins/lsp.lua:99-129`
+- **Formatting**: xmllint (system tool) or lemminx LSP formatting
+- **File Settings**: 2-space indentation, indent-based folding
+- **Auto-close tags**: Type `>` to auto-close XML tags
+- **Supported filetypes**: xml, xsd, xsl, xslt, svg
+
+### Features
+1. **Schema Validation**: Automatic validation against DTD/XSD schemas
+2. **Smart Completion**: Context-aware tag and attribute completion
+3. **Folding**: Indent-based folding enabled by default
+4. **Formatting**: Use `<leader>cf` to format with xmllint
+
+### Prerequisites
+```bash
+# xmllint comes with libxml2
+brew install libxml2  # macOS
+sudo apt-get install libxml2-utils  # Ubuntu/Debian
+```
+
+### Cache Management
+Lemminx stores cache in `~/.cache/lemminx` following XDG standards
+
 ## Important Notes
 
 - The configuration auto-installs missing plugins and LSP servers on first run
@@ -140,3 +210,19 @@ Available in `lua/config/util.lua`:
 - Rounded borders are configured globally for unified UI
 - File operations use Oil.nvim for buffer-based editing
 - Terminal mode navigation uses `<C-h/j/k/l>` for consistency
+
+## Security Configuration
+
+### API Key Management
+
+For AI features (CodeCompanion), API keys are read from environment variables for security:
+
+```bash
+# Add to your shell profile (~/.zshrc, ~/.bashrc, etc.)
+export HELIXMIND_API_KEY="your-actual-api-key-here"
+
+# Or create a .env file in your config directory (not tracked by git)
+echo "HELIXMIND_API_KEY=your-actual-api-key-here" >> ~/.config/nvim/.env
+```
+
+**Important**: Never commit API keys to version control. Use environment variables or excluded files.

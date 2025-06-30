@@ -66,11 +66,13 @@ return {
         "query",
         "regex",
         "scala",
+        "swift",
         "toml",
         "tsx",
         "typescript",
         "vim",
         "vimdoc",
+        "xml",
         "yaml",
       },
       incremental_selection = {

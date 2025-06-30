@@ -410,13 +410,16 @@ return {
   -- Markdown previewer
   {
     "OXY2DEV/markview.nvim",
-    lazy = false,
     ft = { "markdown", "html", "latex", "typst", "yaml" },
     dependencies = {
       "nvim-treesitter/nvim-treesitter",
       "nvim-tree/nvim-web-devicons",
     },
-    opts = {},
+    opts = {
+      experimental = {
+        check_rtp = false, -- Disable runtime path check to avoid loading order warnings
+      },
+    },
   },
 
   -- Image rendering (required for diagram.nvim)

@@ -1,7 +1,36 @@
 -- 🎨 Ultra Modern Theme Initialization (2025)
 
--- Set default colorscheme with fallback
+-- Skip theme initialization if Themery is configured
+local function is_themery_enabled()
+  local config_files = {
+    "lua/plugins/theme-manager.lua",
+    "lua/plugins/themery.lua"
+  }
+  
+  for _, file in ipairs(config_files) do
+    local path = vim.fn.stdpath("config") .. "/" .. file
+    if vim.fn.filereadable(path) == 1 then
+      local content = table.concat(vim.fn.readfile(path), "\n")
+      if content:match("zaldih/themery%.nvim") and not content:match("enabled%s*=%s*false") then
+        return true
+      end
+    end
+  end
+  return false
+end
+
+-- Exit early if Themery is enabled
+if is_themery_enabled() then
+  return
+end
+
+-- Set default colorscheme with fallback (only if no theme is already set)
 local function set_colorscheme()
+  -- Don't override if a colorscheme is already set
+  if vim.g.colors_name then
+    return
+  end
+  
   local colorschemes = {
     "tokyonight-night",
     "rose-pine",
@@ -17,13 +46,13 @@ local function set_colorscheme()
   for _, scheme in ipairs(colorschemes) do
     local ok = pcall(vim.cmd.colorscheme, scheme)
     if ok then
-      print("🎨 Applied colorscheme: " .. scheme)
+      print("🎨 Applied fallback colorscheme: " .. scheme)
       break
     end
   end
 end
 
--- Apply theme after plugins are loaded
+-- Apply theme after plugins are loaded (only as fallback)
 vim.api.nvim_create_autocmd("User", {
   pattern = "VeryLazy",
   callback = function()

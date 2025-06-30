@@ -95,6 +95,38 @@ return {
         jsonls = {}, -- JSON
         html = {}, -- HTML
         cssls = {}, -- CSS
+        -- XML development
+        lemminx = {
+          settings = {
+            xml = {
+              server = {
+                workDir = vim.fn.expand("~/.cache/lemminx"),
+              },
+              format = {
+                enabled = true,
+                splitAttributes = "preserve",
+                joinCDATALines = false,
+                joinCommentLines = false,
+                formatComments = true,
+                joinContentLines = false,
+                trimFinalNewlines = true,
+                insertFinalNewline = true,
+                trimTrailingWhitespace = true,
+                preserveEmptyContent = true,
+                preservedNewlines = 2,
+                spaceBeforeEmptyCloseTag = true,
+              },
+              validation = {
+                enabled = true,
+                resolveExternalEntities = false,
+                noGrammar = "hint",
+              },
+              completion = {
+                autoCloseTags = true,
+              },
+            },
+          },
+        }
       },
       setup = {},
     },
@@ -184,6 +216,21 @@ return {
           return not is_deno(root_dir)
         end)
       end
+      
+      -- Setup sourcekit for Swift development (not available via Mason)
+      local lspconfig = require("lspconfig")
+      lspconfig.sourcekit.setup({
+        capabilities = vim.tbl_deep_extend("force", capabilities, {
+          workspace = {
+            didChangeWatchedFiles = {
+              dynamicRegistration = true,
+            },
+          },
+        }),
+        cmd = { "/usr/bin/sourcekit-lsp" },
+        filetypes = { "swift", "objective-c", "objective-cpp" },
+        root_dir = lspconfig.util.root_pattern("Package.swift", ".git"),
+      })
     end,
   },
 
@@ -300,9 +347,16 @@ return {
         sh = { "shfmt" },
         scala = { "scalafmt" },
         sbt = { "scalafmt" },
+        swift = { "swiftformat" },
+        xml = { "xmllint", "lemminx" },
       },
       formatters = {
         injected = { options = { ignore_errors = true } },
+        xmllint = {
+          command = "xmllint",
+          args = { "--format", "-" },
+          stdin = true,
+        },
       },
     },
     config = function(_, opts)

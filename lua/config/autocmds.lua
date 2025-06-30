@@ -101,3 +101,59 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
   end,
 })
 
+-- Swift-specific settings
+vim.api.nvim_create_autocmd("FileType", {
+  group = augroup("swift_settings"),
+  pattern = "swift",
+  callback = function()
+    vim.opt_local.tabstop = 4
+    vim.opt_local.shiftwidth = 4
+    vim.opt_local.expandtab = true
+    vim.opt_local.commentstring = "// %s"
+  end,
+})
+
+-- Ensure Swift files are detected properly
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  group = augroup("swift_detection"),
+  pattern = "*.swift",
+  callback = function()
+    vim.bo.filetype = "swift"
+  end,
+})
+
+-- XML-specific settings
+vim.api.nvim_create_autocmd("FileType", {
+  group = augroup("xml_settings"),
+  pattern = { "xml", "xsd", "xsl", "xslt", "svg" },
+  callback = function()
+    vim.opt_local.tabstop = 2
+    vim.opt_local.shiftwidth = 2
+    vim.opt_local.expandtab = true
+    vim.opt_local.wrap = false
+    vim.opt_local.textwidth = 0
+    -- Enable folding for XML
+    vim.opt_local.foldmethod = "indent"
+    vim.opt_local.foldlevel = 99
+  end,
+})
+
+-- Auto-close XML tags
+vim.api.nvim_create_autocmd("FileType", {
+  group = augroup("xml_autoclosetag"),
+  pattern = { "xml", "xsd", "xsl", "xslt", "svg", "html" },
+  callback = function()
+    vim.keymap.set("i", ">", function()
+      local line = vim.api.nvim_get_current_line()
+      local col = vim.api.nvim_win_get_cursor(0)[2]
+      local before_cursor = line:sub(1, col)
+      local tag = before_cursor:match("<(%w+)[^>]*$")
+      if tag and not before_cursor:match("/%s*$") then
+        return "></" .. tag .. "><Left><Left><Left>"
+      else
+        return ">"
+      end
+    end, { buffer = true, expr = true })
+  end,
+})
+
