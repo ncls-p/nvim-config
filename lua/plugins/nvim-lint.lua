@@ -17,7 +17,7 @@ return {
         javascriptreact = { "eslint" },
         typescriptreact = { "eslint" },
         svelte = { "eslint" },
-        python = { "ruff", "pylint" },
+        python = { "ruff" }, -- Removed pylint since Pyright handles imports/type checking
         lua = { "luacheck" },
         markdown = { "markdownlint" },
         dockerfile = { "hadolint" },
@@ -185,8 +185,9 @@ return {
           -- Run linting for filetypes that don't have LSP diagnostics or need additional linting
           local ft = vim.bo.filetype
           local always_lint = { "markdown", "dockerfile", "yaml", "json" }
+          local skip_when_lsp = { "python" } -- Skip linting for Python when Pyright is available
           
-          if not has_lsp_diagnostics or vim.tbl_contains(always_lint, ft) then
+          if (not has_lsp_diagnostics or vim.tbl_contains(always_lint, ft)) and not (has_lsp_diagnostics and vim.tbl_contains(skip_when_lsp, ft)) then
             -- Only lint if we have available linters for this filetype
             local available_linters = get_available_linters(ft)
             if #available_linters > 0 then

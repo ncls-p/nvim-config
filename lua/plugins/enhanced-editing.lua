@@ -399,7 +399,6 @@ return {
   -- Smart column alignment
   {
     "Vonr/align.nvim",
-    branch = "v2",
     lazy = true,
     keys = {
       {

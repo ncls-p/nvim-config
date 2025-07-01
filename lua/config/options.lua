@@ -38,50 +38,7 @@ vim.opt.pumheight = 15              -- Maximum items in popup menu
 vim.opt.pumblend = 10               -- Popup menu transparency
 vim.opt.winblend = 0                -- Window transparency
 
--- ✨ Modern rounded borders for all floating windows
-vim.diagnostic.config({
-  float = {
-    border = "rounded",
-    source = "always",
-    header = "",
-    prefix = "",
-    format = function(d)
-      local code = d.code or (d.user_data and d.user_data.lsp.code)
-      if code then
-        return (string.format("%s [%s]", d.message, code):gsub("1. ", ""))
-      end
-      return d.message
-    end,
-  },
-  virtual_text = false,
-  signs = true,
-  underline = true,
-  update_in_insert = false,
-  severity_sort = true,
-})
-
--- 🌟 LSP handlers with beautiful rounded borders
--- Configure LSP handlers with beautiful rounded borders
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-  function(...)
-    return vim.lsp.handlers.hover(...)
-  end,
-  {
-    border = "rounded",
-    max_width = 80,
-    max_height = 20,
-  }
-)
-
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
-  function(...)
-    return vim.lsp.handlers.signature_help(...)
-  end,
-  {
-    border = "rounded",
-    close_events = { "CursorMoved", "BufHidden", "InsertCharPre" },
-  }
-)
+-- ✨ LSP handlers are now configured in lsp.lua - keeping this clean
 
 -- 💫 Better completion menu
 vim.opt.completeopt = "menu,menuone,noselect,preview"

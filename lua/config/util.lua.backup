@@ -183,10 +183,70 @@ function M.opts(name)
   return Plugin.values(plugin, "opts", false)
 end
 
--- LSP utilities (simplified - most functionality moved to native lsp.lua)
+-- LSP utilities
 M.lsp = {}
 
--- Keep only essential utility for file renaming
+function M.lsp.formatter()
+  return {
+    name = "LSP",
+    primary = true,
+    priority = 1,
+    format = function(buf)
+      vim.lsp.buf.format({ bufnr = buf })
+    end,
+    sources = function(buf)
+      local clients = vim.lsp.get_clients({ bufnr = buf })
+      local ret = {}
+      for _, client in ipairs(clients) do
+        if client.supports_method("textDocument/formatting", { bufnr = buf }) then
+          table.insert(ret, client.name)
+        end
+      end
+      return ret
+    end,
+  }
+end
+
+function M.lsp.on_attach(on_attach)
+  vim.api.nvim_create_autocmd("LspAttach", {
+    callback = function(args)
+      local buffer = args.buf
+      local client = vim.lsp.get_client_by_id(args.data.client_id)
+      on_attach(client, buffer)
+    end,
+  })
+end
+
+function M.lsp.setup()
+  vim.diagnostic.config({
+    virtual_text = {
+      spacing = 4,
+      source = "if_many",
+      prefix = "●",
+    },
+    severity_sort = true,
+  })
+end
+
+function M.lsp.on_dynamic_capability(fn)
+  -- Implementation for dynamic capability registration
+end
+
+function M.lsp.get_config(server)
+  local configs = require("lspconfig.configs")
+  return rawget(configs, server)
+end
+
+function M.lsp.disable(server, cond)
+  local util = require("lspconfig.util")
+  local def = M.lsp.get_config(server)
+  def.document_config.on_new_config = util.add_hook_before(def.document_config.on_new_config, function(config, root_dir)
+    if cond(root_dir, config) then
+      config.enabled = false
+    end
+  end)
+end
+
 function M.lsp.on_rename(from, to)
   local clients = vim.lsp.get_clients()
   for _, client in ipairs(clients) do
@@ -206,6 +266,55 @@ function M.lsp.on_rename(from, to)
   end
 end
 
+-- LSP keymaps
+M.lsp.keymaps = {}
+
+function M.lsp.keymaps.on_attach(client, buffer)
+  local function map(mode, lhs, rhs, opts)
+    opts = opts or {}
+    opts.buffer = buffer
+    opts.silent = opts.silent ~= false
+    vim.keymap.set(mode, lhs, rhs, opts)
+  end
+
+  -- LSP keymaps
+  map("n", "gd", vim.lsp.buf.definition, { desc = "Goto Definition" })
+  map("n", "<leader>lr", "<cmd>Telescope lsp_references<cr>", { desc = "References" })
+  map("n", "gD", vim.lsp.buf.declaration, { desc = "Goto Declaration" })
+  map("n", "gI", "<cmd>Telescope lsp_implementations<cr>", { desc = "Goto Implementation" })
+  map("n", "gy", "<cmd>Telescope lsp_type_definitions<cr>", { desc = "Goto T[y]pe Definition" })
+  map("n", "K", vim.lsp.buf.hover, { desc = "Hover" })
+  map("n", "gK", vim.lsp.buf.signature_help, { desc = "Signature Help" })
+  map("i", "<c-k>", vim.lsp.buf.signature_help, { desc = "Signature Help" })
+  map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
+  map("n", "<leader>cr", vim.lsp.buf.rename, { desc = "Rename" })
+
+  -- Conditional keymaps based on server capabilities
+  if client.server_capabilities.documentFormattingProvider then
+    map("n", "<leader>cf", vim.lsp.buf.format, { desc = "Format Document" })
+  end
+end
+
+-- LSP words
+M.lsp.words = {}
+
+function M.lsp.words.setup()
+  -- Implementation for document highlighting
+end
+
+-- LSP inlay hints
+M.lsp.inlay_hints = {}
+
+function M.lsp.inlay_hints.setup()
+  -- Implementation for inlay hints
+end
+
+-- LSP codelens
+M.lsp.codelens = {}
+
+function M.lsp.codelens.setup()
+  -- Implementation for codelens
+end
 
 -- UI utilities
 M.ui = {}
