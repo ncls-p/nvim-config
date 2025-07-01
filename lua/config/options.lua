@@ -117,9 +117,9 @@ vim.opt.showcmd = false      -- Don't show command
 vim.opt.confirm = true       -- Confirm before closing unsaved
 
 -- 🌈 Color and theme settings
-vim.opt.guifont = "JetBrainsMono Nerd Font:h14"
+vim.opt.guifont = "JetBrainsMonoNL Nerd Font:h14"
 if vim.g.neovide then
-  vim.g.neovide_transparency = 0.95
+  vim.g.neovide_opacity = 0.95
   vim.g.neovide_cursor_animation_length = 0.05
   vim.g.neovide_cursor_trail_size = 0.3
 end
