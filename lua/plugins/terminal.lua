@@ -171,6 +171,28 @@ return {
 				python:toggle()
 			end
 
+			-- Standard terminal with unique ID
+			local standard_terminal = Terminal:new({
+				direction = "float",
+				float_opts = {
+					border = "rounded",
+					width = function()
+						return math.floor(vim.o.columns * 0.8)
+					end,
+					height = function()
+						return math.floor(vim.o.lines * 0.8)
+					end,
+				},
+			})
+
+			function _STANDARD_TERMINAL_TOGGLE()
+				standard_terminal:toggle()
+			end
+
+			function _NEW_TERMINAL()
+				vim.cmd("ToggleTerm direction=tab")
+			end
+
 			-- Terminal navigation improvements
 			function _G.set_terminal_keymaps()
 				local opts = { buffer = 0 }
@@ -192,7 +214,7 @@ return {
 			{ "<leader>tf", "<cmd>ToggleTerm direction=float<cr>", desc = "Toggle floating terminal" },
 			{ "<leader>th", "<cmd>ToggleTerm direction=horizontal<cr>", desc = "Toggle horizontal terminal" },
 			{ "<leader>tv", "<cmd>ToggleTerm direction=vertical<cr>", desc = "Toggle vertical terminal" },
-			{ "<leader>tt", "<cmd>ToggleTerm direction=tab<cr>", desc = "Toggle terminal in new tab" },
+			{ "<leader>tt", "<cmd>lua _STANDARD_TERMINAL_TOGGLE()<cr>", desc = "Toggle standard terminal" },
 
 			-- Specific terminal instances
 			{ "<leader>gg", "<cmd>lua _LAZYGIT_TOGGLE()<CR>", desc = "Toggle Lazygit" },
