@@ -43,8 +43,8 @@ return {
         -- java = { "checkstyle" }, -- install via: brew install checkstyle
         -- kotlin = { "ktlint" }, -- install via: brew install ktlint
         -- swift = { "swiftlint" }, -- Commented out - install via: brew install swiftlint
-        -- terraform = { "tflint" }, -- install via: brew install tflint
-        -- ansible = { "ansible-lint" }, -- install via: pip install ansible-lint
+        terraform = { "tflint" }, -- install via: brew install tflint
+        ansible = { "ansible-lint" }, -- install via: pip install ansible-lint
       }
 
       -- Configure specific linters

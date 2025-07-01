@@ -31,6 +31,14 @@ return {
         "yamllint",
         "shellcheck",
         "prettier",
+        -- DevOps tools
+        "dockerfile-language-server",
+        "docker-compose-language-service",
+        "terraform-ls",
+        "tflint",
+        "ansible-language-server",
+        "helm-ls",
+        "yaml-language-server",
       },
     },
     config = function(_, opts)
@@ -97,6 +105,18 @@ return {
       { "[d", vim.diagnostic.goto_prev, desc = "Previous Diagnostic" },
       { "<leader>cd", vim.diagnostic.open_float, desc = "Show Diagnostic" },
       { "<leader>cq", vim.diagnostic.setloclist, desc = "Diagnostic Quickfix" },
+      { "<leader>ct", function()
+        local current_config = vim.diagnostic.config()
+        local virtual_text_enabled = current_config.virtual_text ~= false
+        vim.diagnostic.config({
+          virtual_text = not virtual_text_enabled,
+        })
+        vim.notify(
+          "Virtual text " .. (virtual_text_enabled and "disabled" or "enabled"),
+          vim.log.levels.INFO,
+          { title = "Diagnostics" }
+        )
+      end, desc = "Toggle Virtual Text" },
     },
     config = function()
       -- Configure diagnostics
@@ -107,6 +127,7 @@ return {
           spacing = 4,
           source = "if_many",
           prefix = "●",
+          severity = { min = vim.diagnostic.severity.HINT },
         },
         severity_sort = true,
         signs = {
@@ -122,7 +143,28 @@ return {
           source = "always",
           header = "",
           prefix = "",
+          severity_sort = true,
+          focusable = false,
         },
+      })
+
+      -- Enhanced diagnostics for specific filetypes
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "dockerfile", "terraform", "yaml" },
+        callback = function()
+          -- Force enable virtual text for DevOps files
+          vim.diagnostic.config({
+            virtual_text = {
+              spacing = 4,
+              source = "always",
+              prefix = "●",
+              severity = { min = vim.diagnostic.severity.HINT },
+              format = function(diagnostic)
+                return string.format("%s: %s", diagnostic.source or "LSP", diagnostic.message)
+              end,
+            },
+          }, vim.api.nvim_get_current_buf())
+        end,
       })
 
       -- Global LSP configuration (applies to all servers)
@@ -359,6 +401,142 @@ return {
         ),
       }
 
+      -- Docker Language Server
+      vim.lsp.config.dockerls = {
+        cmd = function()
+          -- Try different possible command names
+          local possible_commands = {
+            "dockerfile-language-server-nodejs",
+            "docker-langserver",
+            "dockerfile-language-server"
+          }
+          
+          for _, cmd in ipairs(possible_commands) do
+            if vim.fn.executable(cmd) == 1 then
+              return { cmd, "--stdio" }
+            end
+          end
+          
+          -- Fallback to the standard name
+          return { "dockerfile-language-server-nodejs", "--stdio" }
+        end,
+        filetypes = { "dockerfile" },
+        root_markers = { "Dockerfile", "docker-compose.yml", ".git" },
+        single_file_support = true,
+        settings = {
+          docker = {
+            languageserver = {
+              diagnostics = {
+                -- Enable hadolint integration
+                hadolintPath = "hadolint",
+              },
+            },
+          },
+        },
+      }
+
+      -- Docker Compose Language Server
+      vim.lsp.config.docker_compose_language_service = {
+        cmd = { "docker-compose-langserver", "--stdio" },
+        filetypes = { "yaml.docker-compose" },
+        root_markers = { "docker-compose.yml", "docker-compose.yaml", ".git" },
+        single_file_support = true,
+      }
+
+      -- Terraform Language Server
+      vim.lsp.config.terraformls = {
+        cmd = { "terraform-ls", "serve" },
+        filetypes = { "terraform", "tf", "terraform-vars" },
+        root_markers = { ".terraform", ".git" },
+      }
+
+      -- Ansible Language Server
+      vim.lsp.config.ansiblels = {
+        cmd = { "ansible-language-server", "--stdio" },
+        filetypes = { "yaml.ansible" },
+        root_markers = { "ansible.cfg", ".ansible-lint", ".git" },
+        settings = {
+          ansible = {
+            ansible = {
+              path = "ansible",
+            },
+            executionEnvironment = {
+              enabled = false,
+            },
+            python = {
+              interpreterPath = "python",
+            },
+            validation = {
+              enabled = true,
+              lint = {
+                enabled = true,
+                path = "ansible-lint",
+              },
+            },
+          },
+        },
+      }
+
+      -- Helm Language Server
+      vim.lsp.config.helm_ls = {
+        cmd = { "helm_ls", "serve" },
+        filetypes = { "helm" },
+        root_markers = { "Chart.yaml", "values.yaml", ".git" },
+        settings = {
+          ["helm-ls"] = {
+            yamlls = {
+              path = "yaml-language-server",
+            },
+          },
+        },
+      }
+
+      -- YAML Language Server (enhanced for DevOps)
+      vim.lsp.config.yamlls = {
+        cmd = { "yaml-language-server", "--stdio" },
+        filetypes = { "yaml", "yml" },
+        root_markers = { ".git" },
+        settings = {
+          yaml = {
+            schemas = {
+              -- Kubernetes schemas
+              ["https://raw.githubusercontent.com/instrumenta/kubernetes-json-schema/master/v1.29.0/all.json"] = "/*.k8s.yaml",
+              ["https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.29.0/all.json"] = "k8s/**/*.yaml",
+              -- Docker compose
+              ["https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json"] = "docker-compose*.yml",
+              -- GitHub Actions
+              ["https://json.schemastore.org/github-workflow.json"] = ".github/workflows/*",
+              -- GitLab CI
+              ["https://json.schemastore.org/gitlab-ci.json"] = ".gitlab-ci.yml",
+              -- Ansible
+              ["https://json.schemastore.org/ansible-playbook.json"] = "*playbook*.yml",
+              ["https://json.schemastore.org/ansible-inventory.json"] = "*inventory*.yml",
+              -- Helm
+              ["https://json.schemastore.org/chart.json"] = "Chart.yaml",
+              ["https://json.schemastore.org/helm-values.json"] = "values*.yaml",
+            },
+            validate = true,
+            hover = true,
+            completion = true,
+            customTags = {
+              "!reference sequence",
+              "!Ref",
+              "!Sub",
+              "!GetAtt",
+              "!ImportValue",
+              "!Join",
+              "!Select",
+              "!Split",
+              "!Not",
+              "!Equals",
+              "!And",
+              "!Or",
+              "!If",
+            },
+          },
+        },
+      }
+
       -- Enable LSP servers
       vim.lsp.enable({
         "lua_ls",
@@ -369,6 +547,13 @@ return {
         "cssls",
         "lemminx",
         "sourcekit",
+        -- DevOps servers
+        "dockerls",
+        "docker_compose_language_service",
+        "terraformls",
+        "ansiblels",
+        "helm_ls",
+        "yamlls",
       })
 
 
@@ -481,6 +666,11 @@ return {
         yaml = { "prettier" },
         markdown = { "prettier" },
         python = { "ruff_format", "ruff_fix" },
+        -- DevOps formats
+        dockerfile = { "hadolint" },
+        terraform = { "terraform_fmt" },
+        hcl = { "terraform_fmt" },
+        ["terraform-vars"] = { "terraform_fmt" },
       },
       formatters = {
         injected = { options = { ignore_errors = true } },

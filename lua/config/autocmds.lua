@@ -157,3 +157,209 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+-- DevOps file type detection and settings
+
+-- Docker file detection
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  group = augroup("docker_detection"),
+  pattern = {
+    "Dockerfile",
+    "Dockerfile.*",
+    "*.dockerfile",
+    ".dockerignore",
+  },
+  callback = function()
+    local filename = vim.fn.expand("%:t")
+    if filename:match("^Dockerfile") or filename:match("%.dockerfile$") then
+      vim.bo.filetype = "dockerfile"
+    end
+  end,
+})
+
+-- Docker Compose detection
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  group = augroup("docker_compose_detection"),
+  pattern = {
+    "docker-compose.yml",
+    "docker-compose.yaml",
+    "docker-compose.*.yml",
+    "docker-compose.*.yaml",
+    "compose.yml",
+    "compose.yaml",
+  },
+  callback = function()
+    vim.bo.filetype = "yaml.docker-compose"
+  end,
+})
+
+-- Kubernetes YAML detection
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  group = augroup("k8s_detection"),
+  pattern = {
+    "*.k8s.yml",
+    "*.k8s.yaml",
+    "*.kubernetes.yml",
+    "*.kubernetes.yaml",
+    "k8s/**/*.yml",
+    "k8s/**/*.yaml",
+    "kubernetes/**/*.yml",
+    "kubernetes/**/*.yaml",
+    "manifests/**/*.yml",
+    "manifests/**/*.yaml",
+  },
+  callback = function()
+    vim.bo.filetype = "yaml"
+    vim.bo.syntax = "yaml"
+  end,
+})
+
+-- Ansible detection
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  group = augroup("ansible_detection"),
+  pattern = {
+    "*playbook*.yml",
+    "*playbook*.yaml",
+    "site.yml",
+    "site.yaml",
+    "main.yml",
+    "main.yaml",
+    "*/tasks/*.yml",
+    "*/tasks/*.yaml",
+    "*/handlers/*.yml",
+    "*/handlers/*.yaml",
+    "*/vars/*.yml",
+    "*/vars/*.yaml",
+    "*/defaults/*.yml",
+    "*/defaults/*.yaml",
+    "*/meta/*.yml",
+    "*/meta/*.yaml",
+    "ansible.cfg",
+    "*/group_vars/*",
+    "*/host_vars/*",
+  },
+  callback = function()
+    vim.bo.filetype = "yaml.ansible"
+  end,
+})
+
+-- Helm template detection
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  group = augroup("helm_detection"),
+  pattern = {
+    "*/templates/*.yaml",
+    "*/templates/*.yml",
+    "Chart.yaml",
+    "values.yaml",
+    "values.yml",
+    "values-*.yaml",
+    "values-*.yml",
+    "requirements.yaml",
+    "requirements.yml",
+  },
+  callback = function()
+    local filepath = vim.fn.expand("%:p")
+    if filepath:match("/templates/") then
+      vim.bo.filetype = "helm"
+    else
+      vim.bo.filetype = "yaml"
+    end
+  end,
+})
+
+-- Terraform file detection
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  group = augroup("terraform_detection"),
+  pattern = {
+    "*.tf",
+    "*.tfvars",
+    "*.hcl",
+  },
+  callback = function()
+    local ext = vim.fn.expand("%:e")
+    if ext == "tfvars" then
+      vim.bo.filetype = "terraform-vars"
+    elseif ext == "hcl" then
+      vim.bo.filetype = "hcl"
+    else
+      vim.bo.filetype = "terraform"
+    end
+  end,
+})
+
+-- GitOps file detection (ArgoCD, Flux)
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  group = augroup("gitops_detection"),
+  pattern = {
+    "**/flux-system/**/*.yaml",
+    "**/flux-system/**/*.yml",
+    "**/applications/**/*.yaml",
+    "**/applications/**/*.yml",
+    "kustomization.yaml",
+    "kustomization.yml",
+    "*.kustomization.yaml",
+    "*.kustomization.yml",
+  },
+  callback = function()
+    vim.bo.filetype = "yaml"
+    vim.bo.syntax = "yaml"
+  end,
+})
+
+-- DevOps file settings
+vim.api.nvim_create_autocmd("FileType", {
+  group = augroup("devops_settings"),
+  pattern = {
+    "dockerfile",
+    "terraform",
+    "hcl",
+    "terraform-vars",
+    "yaml.docker-compose",
+    "yaml.ansible",
+    "helm",
+  },
+  callback = function()
+    vim.opt_local.tabstop = 2
+    vim.opt_local.shiftwidth = 2
+    vim.opt_local.expandtab = true
+    vim.opt_local.autoindent = true
+    vim.opt_local.smartindent = true
+  end,
+})
+
+-- Terraform specific settings
+vim.api.nvim_create_autocmd("FileType", {
+  group = augroup("terraform_settings"),
+  pattern = { "terraform", "hcl", "terraform-vars" },
+  callback = function()
+    vim.opt_local.commentstring = "# %s"
+    vim.opt_local.formatoptions:remove("o") -- Don't continue comments with o/O
+  end,
+})
+
+-- Docker specific settings
+vim.api.nvim_create_autocmd("FileType", {
+  group = augroup("docker_settings"),
+  pattern = "dockerfile",
+  callback = function()
+    vim.opt_local.commentstring = "# %s"
+    vim.opt_local.tabstop = 4
+    vim.opt_local.shiftwidth = 4
+  end,
+})
+
+-- YAML indentation for DevOps files
+vim.api.nvim_create_autocmd("FileType", {
+  group = augroup("yaml_devops_settings"),
+  pattern = { "yaml", "yaml.docker-compose", "yaml.ansible", "helm" },
+  callback = function()
+    vim.opt_local.tabstop = 2
+    vim.opt_local.shiftwidth = 2
+    vim.opt_local.expandtab = true
+    vim.opt_local.indentkeys:remove("<:>")  -- Disable auto-unindent for YAML
+    vim.opt_local.indentkeys:remove("0#")   -- Disable auto-unindent for comments
+  end,
+})
+
+-- Load DevOps keymaps
+require("config.devops-keymaps")
+
