@@ -34,14 +34,7 @@ return {
         cinnamon.scroll("<C-d><C-d><C-d>")
       end, { silent = true })
 
-      -- Regular page scrolling
-      vim.keymap.set("n", "<C-u>", function()
-        cinnamon.scroll("<C-u>")
-      end, { silent = true })
-
-      vim.keymap.set("n", "<C-d>", function()
-        cinnamon.scroll("<C-d>")
-      end, { silent = true })
+      -- Regular page scrolling disabled - using default Vim behavior
     end,
   },
 }

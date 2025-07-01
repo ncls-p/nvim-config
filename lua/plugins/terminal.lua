@@ -83,7 +83,7 @@ return {
 
 			-- Claude Code terminal instances
 			local claude_default = Terminal:new({
-				cmd = "/Users/ncls/.claude/local/claude",
+				cmd = "$HOME/.claude/local/claude",
 				direction = "float",
 				float_opts = {
 					border = "rounded",
@@ -100,7 +100,7 @@ return {
 			})
 
 			local claude_continue = Terminal:new({
-				cmd = "/Users/ncls/.claude/local/claude --continue",
+				cmd = "$HOME/.claude/local/claude --continue",
 				direction = "float",
 				float_opts = {
 					border = "rounded",
