@@ -31,7 +31,9 @@ local function hide_current_buffer()
 
   -- Create an ephemeral scratch buffer
   local scratch = vim.api.nvim_create_buf(false, true) -- listed = false, scratch = true
-  vim.api.nvim_buf_set_option(scratch, "bufhidden", "wipe")
+  -- Do NOT wipe the scratch automatically; keep it around just in case another
+  -- plugin (e.g. snacks.nvim) still references it briefly.
+  vim.api.nvim_buf_set_option(scratch, "bufhidden", "hide")
   vim.api.nvim_win_set_buf(win, scratch)
 
   table.insert(hidden_stack, { buf = buf, win = win })
