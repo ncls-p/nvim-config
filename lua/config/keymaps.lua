@@ -10,64 +10,6 @@ local function map(mode, lhs, rhs, opts)
 end
 
 -- ---------------------------------------------------------------------
--- 🔒 Buffer hide / show helpers
--- ---------------------------------------------------------------------
--- Strategy:
--- Instead of closing the window (which would lose its size & position),
--- we replace the current buffer with a scratch buffer **in the same
--- window**.  When we “re-open”, we simply put the original buffer back
--- into that window, preserving the exact layout.
-
----@class HiddenEntry
----@field buf integer  --- original buffer
----@field win integer  --- window that holds the scratch buffer
-
-local hidden_stack = {} ---@type HiddenEntry[]
-
----Hide the current buffer by swapping in a scratch buffer
-local function hide_current_buffer()
-  local win = vim.api.nvim_get_current_win()
-  local buf = vim.api.nvim_get_current_buf()
-
-  -- Create an ephemeral scratch buffer
-  local scratch = vim.api.nvim_create_buf(false, true) -- listed = false, scratch = true
-  -- Do NOT wipe the scratch automatically; keep it around just in case another
-  -- plugin (e.g. snacks.nvim) still references it briefly.
-  vim.api.nvim_buf_set_option(scratch, "bufhidden", "hide")
-  vim.api.nvim_win_set_buf(win, scratch)
-
-  table.insert(hidden_stack, { buf = buf, win = win })
-end
-
----Re-open the most recently hidden buffer in its original window
-local function show_last_hidden_buffer()
-  while #hidden_stack > 0 do
-    local entry = table.remove(hidden_stack)
-    local buf_ok = vim.api.nvim_buf_is_loaded(entry.buf)
-    local win_ok = vim.api.nvim_win_is_valid(entry.win)
-
-    if buf_ok and win_ok then
-      -- Put buffer back into its original window
-      vim.api.nvim_win_set_buf(entry.win, entry.buf)
-      vim.api.nvim_set_current_win(entry.win)
-      return
-    elseif buf_ok then
-      -- Window no longer exists → open buffer in current window
-      vim.cmd("buffer " .. entry.buf)
-      return
-    end
-    -- Otherwise, buffer wiped; continue searching
-  end
-  vim.notify("No hidden buffer to reopen", vim.log.levels.INFO)
-end
-
--- Keymaps:
---   <leader>bh → Hide the current buffer (keeps window)
---   <leader>bs → Re-open the most recently hidden buffer
-map("n", "<leader>bh", hide_current_buffer, { desc = "Hide buffer (keep window)" })
-map("n", "<leader>bs", show_last_hidden_buffer, { desc = "Show last hidden buffer" })
-
--- ---------------------------------------------------------------------
 -- Existing keymaps
 -- ---------------------------------------------------------------------
 -- better up/down
@@ -103,6 +45,7 @@ map("n", "[b", "<cmd>bprevious<cr>", { desc = "Prev buffer" })
 map("n", "]b", "<cmd>bnext<cr>", { desc = "Next buffer" })
 map("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
 map("n", "<leader>`", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
+map("n", "<leader>bo", "<cmd>%bd|e#|bd#<cr>", { desc = "Delete other buffers" })
 
 -- Clear search with <esc>
 map({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and clear hlsearch" })
@@ -244,7 +187,7 @@ map("n", "<leader><tab>]", "<cmd>tabnext<cr>", { desc = "Next Tab" })
 map("n", "<leader><tab>d", "<cmd>tabclose<cr>", { desc = "Close Tab" })
 map("n", "<leader><tab>[", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
 
--- 🎨 Enhanced clipboard operations (2025 best practices)
+-- 🎨 Enhanced clipboard operations
 map({ "n", "v" }, "<D-y>", '"+y', { desc = "Copy to system clipboard (macOS)" })
 map({ "n", "v" }, "<C-y>", '"+y', { desc = "Copy to system clipboard" })
 map({ "n", "v" }, "<leader>y", '"+y', { desc = "Yank to system clipboard" })
