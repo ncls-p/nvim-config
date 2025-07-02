@@ -37,9 +37,9 @@ end
 
 -- Keymaps:
 --   <leader>bh → Hide the current buffer (keeps it in memory)
---   <leader>bo → Re-open the most recently hidden buffer
+--   <leader>bs → Re-open the most recently hidden buffer
 map("n", "<leader>bh", hide_current_buffer, { desc = "Hide buffer" })
-map("n", "<leader>bo", show_last_hidden_buffer, { desc = "Open hidden buffer" })
+map("n", "<leader>bs", show_last_hidden_buffer, { desc = "Open hidden buffer" })
 
 -- ---------------------------------------------------------------------
 -- Existing keymaps
