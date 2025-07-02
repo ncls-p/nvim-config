@@ -23,6 +23,8 @@ return {
         "--pretty",
         "--stream",
       },
+      -- Recharge automatiquement les buffers changés par Aider
+      auto_reload = true,
     },
     -- Laisser Lazy appeler automatiquement setup avec `opts`
     config = true,
