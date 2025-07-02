@@ -2,7 +2,10 @@ return {
   -- Enhanced file management - Oil.nvim
   {
     "stevearc/oil.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
+    dependencies = { 
+      "nvim-tree/nvim-web-devicons",
+      "benomahony/oil-git.nvim",
+    },
     keys = {
       { "<leader>o", "<cmd>Oil<cr>",         desc = "Open Oil" },
       { "<leader>O", "<cmd>Oil --float<cr>", desc = "Open Oil (Float)" },
