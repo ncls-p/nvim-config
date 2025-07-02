@@ -1,375 +1,228 @@
 # Modern Neovim Configuration (2025)
 
-A highly optimized, feature-rich Neovim configuration built with lazy.nvim for blazing-fast startup times and modern development workflows. This configuration provides a complete IDE experience with LSP support, AI integration, and over 800 curated themes.
+An **ultra-modern** Neovim setup powered by **lazy.nvim** for lightning-fast startup, a complete IDE experience (native LSP, AI, sleek UI) and productive workflows in every language.
+
+---
 
 ## ✨ Features
 
 ### 🔧 Core
-- **Plugin Manager**: lazy.nvim (fast startup with lazy loading)
-- **LSP**: Native LSP with Mason for automatic server management  
-- **Completion**: blink.cmp (fast, modern completion engine)
-- **Syntax**: Treesitter for modern syntax highlighting
-- **UI**: Modern rounded borders throughout interface
-- **Scrolling**: Smooth scrolling with cinnamon.nvim
+- **Plugin manager:** `lazy.nvim` (aggressive *lazy-loading*)
+- **Native LSP** via `mason.nvim` (auto-installs servers)
+- **Completion:** `blink.cmp` (fast, modern)
+- **Syntax tree:** `nvim-treesitter`
+- **UI:** rounded floating windows & filtered notifications (`nvim-notify`)
+- **Smooth scrolling:** `neoscroll.nvim`
 
 ### 🎯 Essential Plugins
-- **Telescope**: Fuzzy finder for files, grep, and more
-- **Neo-tree**: Modern file explorer
-- **Oil.nvim**: Buffer-based file operations
-- **Bufferline**: Modern buffer/tab management with visual indicators
-- **ToggleTerm**: Advanced terminal management with floating windows
-- **Which-key**: Interactive keybinding help
-- **Gitsigns**: Git integration with signs and hunks
-- **Lualine**: Beautiful status line
-- **Noice**: Enhanced UI for messages and popups
+| Category | Key plugins |
+|----------|-------------|
+| Fuzzy finder | **fzf-lua** |
+| File explorers | **neo-tree**, **oil.nvim** |
+| Buffers/Tabs | **bufferline.nvim** |
+| Integrated terminal | **toggleterm.nvim** |
+| Help | **which-key.nvim** |
+| Git | **gitsigns.nvim**, **diffview.nvim**, **git-conflict.nvim** |
+| Status line | **lualine.nvim** |
+| UI messages | **noice.nvim** |
+| Quickfix + preview | **nvim-bqf** |
+| Scrolling | **neoscroll.nvim** |
 
-
-### ⚡ Enhanced Navigation & Editing
-- **Flash.nvim**: Lightning-fast code navigation with labels
-- **Git-conflict**: Visual merge conflict resolution
-- **Diffview**: Advanced git diff and merge tool
-- **nvim-bqf**: Enhanced quickfix list
-- **Align.nvim**: Smart text alignment
+### ⚡ Navigation & Editing
+- **Align.nvim** (smart column alignment)
+- **Flash.nvim** (super-fast jumps)
+- … plus many other modern utilities
 
 ### 🤖 AI Integration
-- **Claude Code CLI**: Terminal integration for Claude Code CLI tool in Neovim
+| Use-case | Plugin | Shortcuts |
+|----------|--------|-----------|
+| Chat & AI actions | **codecompanion.nvim** | `<leader>ai`, `<leader>aa` |
+| Command-line | **Claude Code CLI** | `<leader>cc`, `<leader>cC` |
 
 ### 🎨 Theme Management
-- **colorbox.nvim** - Automatic theme collection and management (800+ high-quality themes)
-- **10 Pre-configured Premium Themes**: Tokyo Night, Catppuccin, Kanagawa, Nightfox, Rose Pine, Onedark, Oxocarbon, Everforest, Gruvbox, Nord
-- **Smart filtering** - Only includes themes with 800+ GitHub stars
-- **Theme shuffling** - Quickly try new themes with a keypress
+- **themery.nvim**: pick / save themes with live preview
+- **Pre-configured premium themes:** Tokyo Night, Catppuccin, Kanagawa, Nightfox, Rose-Pine, OneDark, Oxocarbon, Everforest, Gruvbox, Nord
+- Shuffle (`<leader>uc`) & theme picker (`<leader>uC`)
 
-## ⌨️ Key Bindings
+---
 
-### Leader Key: `<Space>`
+## ⌨️ Keybindings (Leader = `<Space>`)
 
-#### File Operations
-- `<leader>ff` - Find files
-- `<leader>fg` - Live grep
-- `<leader>fr` - Recent files
-- `<leader>fb` - Open buffers
-- `<leader>e` - Toggle file explorer (Neo-tree)
-- `<leader>o` - Open Oil (buffer-based file manager)
-- `<leader>O` - Open Oil in float
+> Press **which-key** (`<leader>` then pause) to discover them all.
 
-#### LSP & Code
-- `gd` - Go to definition
-- `<leader>lr` - Go to references
-- `K` - Hover documentation
-- `<leader>ca` - Code actions
-- `<leader>cr` - Rename symbol
-- `<leader>cf` - Format code
-- `<leader>cl` - LSP info
+### Files & Search
+- `<leader>ff`  →  find file
+- `<leader>fg`  →  live grep
+- `<leader>fr`  →  recent files
+- `<leader>fb`  →  buffers
+- `<leader>e`   →  toggle **neo-tree**
+- `<leader>o / O` →  **oil.nvim** (normal / float)
 
-#### Git
-- `]h` / `[h` - Next/prev git hunk
-- `<leader>ghs` - Stage hunk
-- `<leader>ghr` - Reset hunk
-- `<leader>ghp` - Preview hunk
-- `<leader>gd` - Open Diffview
-- `<leader>gh` - File history
-- `<leader>gco` / `<leader>gct` - Choose ours/theirs (conflicts)
-- `]x` / `[x` - Next/prev conflict
+### LSP & Code
+- `gd`  →  go to definition
+- `<leader>lr` →  references
+- `K`   →  hover docs
+- `<leader>ca` →  code actions
+- `<leader>cr` →  rename symbol
+- `<leader>cf` →  format buffer
+- `<leader>cl` →  LSP info
 
-#### Terminal Management
-- `<Ctrl+\>` - Toggle floating terminal
-- `<leader>tf` - Toggle floating terminal
-- `<leader>th` - Toggle horizontal terminal
-- `<leader>tv` - Toggle vertical terminal
-- `<leader>tt` - Toggle terminal in new tab
-- `<leader>ta` - Toggle all terminals
-- `<leader>tk` - Kill all terminals
+### Git
+- `]h / [h` →  next / previous hunk  
+- `<leader>ghs / ghr / ghp` →  stage / reset / preview hunk  
+- `<leader>gd` →  **diffview**
+- `<leader>gh` →  file history
+- `<leader>gco / gct` →  resolve conflicts (ours / theirs)
 
-#### Claude Code & Development Tools
-- `<leader>cc` - Open Claude Code in floating terminal
-- `<leader>cC` - Open Claude Code with --continue flag
-- `<leader>gg` - Toggle Lazygit
-- `<leader>tn` - Toggle Node.js REPL
-- `<leader>tp` - Toggle Python REPL
+### Terminals
+- `<C-\>` →  toggle floating terminal  
+- `<leader>tf / th / tv / tt` →  float / horizontal / vertical / tab  
+- `<leader>ta / tk` →  all terminals / kill
 
-#### Terminal Navigation (in terminal mode)
-- `<Esc>` or `jk` - Exit terminal mode
-- `<Ctrl+h/j/k/l>` - Navigate between windows from terminal
+### AI
+- `<leader>ai` →  AI chat
+- `<leader>aa` →  AI actions
+- `<leader>cc / cC` →  **Claude Code**
 
+### Navigation
+- `s / S` →  **flash** jump
+- `aa / as` (visual) →  align
 
-#### Enhanced Navigation
-- `s` - Flash jump (any character)
-- `S` - Flash treesitter jump
-- `aa` - Align to character (visual mode)
-- `as` - Align to string (visual mode)
+### Buffers
+- `<Tab> / <S-Tab>` →  next / previous
+- `<leader>bd` →  close buffer
+- `<leader>bp` →  pin
+- `<leader>bo` →  close others
 
-#### Buffer Management
-- `<Tab>` / `<S-Tab>` - Next/previous buffer (bufferline)
-- `<leader>fb` - Find buffers (Telescope)
-- `<leader>bd` - Delete buffer
-- `<leader>bb` - Switch to other buffer
-- `<leader>bp` - Toggle pin buffer
-- `<leader>bo` - Close other buffers
-- `<leader>br` / `<leader>bl` - Close buffers to right/left
-- `<leader>b1-5` - Go to buffer 1-5 directly
+### Clipboard (system)
+- `<leader>y / Y / p / P / d` →  yank / paste / delete to system clipboard
+- `<Cmd+Y>` / `<C-Y>` →  quick copy
 
-#### Clipboard Operations (Enhanced)
-- `<Cmd+Y>` / `<Ctrl+Y>` - Copy to system clipboard
-- `<leader>y` - Yank to system clipboard
-- `<leader>Y` - Yank to end of line (system clipboard)
-- `<leader>p` / `<leader>P` - Paste from system clipboard
-- `<leader>d` - Delete without yanking (preserve clipboard)
+### Windows
+- `<C-h/j/k/l>` →  move
+- `<leader>w- / w\|` →  splits
 
-#### Window Management
-- `<C-h/j/k/l>` - Navigate between windows
-- `<leader>w-` - Split horizontally
-- `<leader>w|` - Split vertically
+### Themes
+- `<leader>uc` →  random theme
+- `<leader>uC` →  choose theme
 
-#### Theme Management
-- `<leader>uc` - Shuffle to random theme
-- `<leader>uC` - Select theme from list
+---
 
 ## 🚀 Installation
 
-### Prerequisites
+### Requirements
+- **Neovim** ≥ 0.10
+- **Git**, **ripgrep**
+- **Node.js** ≥ 16, **Python 3**
+- **fd** (optional), **Nerd Font**
 
-- **Neovim**: v0.10.0 or higher
-- **Git**: For plugin management
-- **Node.js**: v16+ (for many LSP servers and tools)
-- **Python 3**: For Python development and some tools
-- **ripgrep**: For fast searching (required)
-- **fd**: For file finding (optional but recommended)
-- **A Nerd Font**: For icons and symbols (recommended: JetBrainsMono Nerd Font)
-
-### Quick Install
-
-1. **Backup your existing configuration** (if any):
-   ```bash
-   mv ~/.config/nvim ~/.config/nvim.backup
-   ```
-
-2. **Clone this configuration**:
-   ```bash
-   git clone https://github.com/ncls-p/nvim-config ~/.config/nvim
-   ```
-
-3. **Start Neovim**:
-   ```bash
-   nvim
-   ```
-
-   On first launch, the configuration will:
-   - Bootstrap lazy.nvim plugin manager
-   - Install all plugins automatically
-   - Install LSP servers via Mason
-   - Download and configure Treesitter parsers
-   - Set up the theme collection
-
-### Platform-Specific Instructions
-
-#### macOS
+### Quick install
 ```bash
-# Install prerequisites
-brew install neovim ripgrep fd node python@3.12
+# Backup old config
+mv ~/.config/nvim ~/.config/nvim.backup
 
-# Install a Nerd Font
+# Clone
+git clone https://github.com/ncls-p/nvim-config ~/.config/nvim
+
+# Start Neovim
+nvim
+```
+First launch: bootstrap `lazy.nvim`, install plugins, LSP (Mason) & Treesitter parsers.
+
+### OS-specific guides
+<details><summary>macOS</summary>
+
+```bash
+brew install neovim ripgrep fd node python@3.12
 brew tap homebrew/cask-fonts
 brew install --cask font-jetbrains-mono-nerd-font
 ```
+</details>
 
-#### Ubuntu/Debian
+<details><summary>Ubuntu / Debian</summary>
+
 ```bash
-# Add Neovim PPA for latest version
 sudo add-apt-repository ppa:neovim-ppa/unstable
 sudo apt update
-
-# Install prerequisites
 sudo apt install neovim ripgrep fd-find nodejs npm python3 python3-pip
-
-# Install a Nerd Font manually from:
-# https://www.nerdfonts.com/font-downloads
 ```
+</details>
 
-#### Arch Linux
+<details><summary>Arch Linux</summary>
+
 ```bash
-# Install prerequisites
 sudo pacman -S neovim ripgrep fd nodejs npm python python-pip
-
-# Install a Nerd Font
 yay -S ttf-jetbrains-mono-nerd
 ```
+</details>
 
-### Post-Installation
-
-1. **Check health**:
-   ```vim
-   :checkhealth
-   ```
-
-2. **Install additional tools** (optional):
-   ```bash
-   # Lazygit for git integration
-   brew install lazygit  # macOS
-   # or see: https://github.com/jesseduffield/lazygit#installation
-   
-   # Claude Code CLI for AI assistance
-   # See: https://docs.anthropic.com/en/docs/claude-code
-   ```
-
-3. **Sync plugins** (if needed):
-   ```vim
-   :Lazy sync
-   ```
+---
 
 ## 📁 Structure
 
 ```
 ~/.config/nvim/
-├── init.lua                    # Entry point with lazy.nvim bootstrap
-├── lazy-lock.json              # Plugin version lock file
-├── CLAUDE.md                   # Instructions for Claude Code AI
+├── init.lua
 ├── lua/
-│   ├── config/                 # Core configuration
-│   │   ├── autocmds.lua        # Auto commands
-│   │   ├── keymaps.lua         # Global key mappings  
-│   │   ├── options.lua         # Neovim options
-│   │   ├── theme-init.lua      # Theme initialization
-│   │   └── util.lua            # Utility functions
-│   └── plugins/                # Plugin specifications (23 modules)
-│       ├── lsp.lua             # LSP configuration with Mason
-│       ├── blink-cmp.lua       # Modern completion engine
-│       ├── editor.lua          # Telescope, Neo-tree, Oil.nvim
-│       ├── terminal.lua        # Terminal management
-│       ├── ui.lua              # UI enhancements
-│       ├── git.lua             # Git integration
-│       ├── treesitter.lua      # Syntax highlighting
-│       ├── theme-manager.lua   # 800+ theme collection
-│       ├── claude-code.lua     # Claude Code integration
-│       └── ...                 # Other specialized modules
-└── README.md                   # This documentation
+│   ├── config/          # options, keymaps …
+│   └── plugins/         # ≈23 modules (LSP, UI, etc.)
+│       ├── lsp.lua
+│       ├── blink-cmp.lua
+│       ├── aesthetic-ui.lua
+│       ├── codecompanion.lua
+│       ├── devops.lua
+│       ├── enhanced-editing.lua
+│       ├── fzf.lua
+│       ├── mini.lua
+│       ├── theme-manager.lua
+│       ├── ultra-dashboard.lua
+│       └── …
+└── README.md
 ```
-
-## 🔧 Customization
-
-### Claude Code CLI Integration
-
-1. **Install Claude Code CLI**:
-   ```bash
-   # Visit: https://docs.anthropic.com/en/docs/claude-code
-   # Follow installation instructions for your platform
-   ```
-
-2. **Verify installation**:
-   ```bash
-   claude --version
-   ```
-
-3. **Usage in Neovim**:
-   - `<leader>cc` - Open Claude Code in floating terminal
-   - `<leader>cC` - Continue previous conversation
-   - `<leader>cV` - Verbose mode
-   - File changes are automatically detected and buffers refreshed
-
-### Adding LSP Servers
-
-1. **Via Mason UI** (recommended):
-   ```vim
-   :Mason
-   ```
-   Then press `i` on any server to install.
-
-2. **Via configuration**:
-   Edit `lua/plugins/lsp.lua` and add to the `servers` table:
-   ```lua
-   opts.servers.rust_analyzer = {
-     settings = {
-       ["rust-analyzer"] = {
-         -- server-specific settings
-       }
-     }
-   }
-   ```
-
-### Managing Themes
-- Run `<leader>uc` to shuffle through high-quality themes
-- Run `<leader>uC` to select from a list
-- colorbox.nvim automatically downloads and manages 800+ themes
-- To update theme collection: `:lua require("colorbox").update()`
-
-### Adding Plugins
-Create new plugin specifications in the appropriate file under `lua/plugins/` or create new plugin files.
-
-## 🎯 Performance
-
-This configuration is optimized for fast startup times:
-
-- **Startup time**: ~50-100ms (after initial setup)
-- **Lazy loading**: Plugins load only when needed
-- **Minimal core**: Only essential plugins at startup
-- **Disabled builtins**: Unnecessary Neovim plugins disabled
-
-### Performance Tips
-
-1. **Profile startup**:
-   ```vim
-   :Lazy profile
-   ```
-
-2. **Check loaded plugins**:
-   ```vim
-   :Lazy
-   ```
-
-3. **Debug slow operations**:
-   ```vim
-   :lua vim.cmd('profile start profile.log')
-   :lua vim.cmd('profile func *')
-   :lua vim.cmd('profile file *')
-   " Do some operations
-   :lua vim.cmd('profile stop')
-   ```
-
-## 🆘 Troubleshooting
-
-### Common Issues
-
-1. **Icons not displaying**:
-   - Install a Nerd Font and configure your terminal to use it
-
-2. **LSP not working**:
-   ```vim
-   :LspInfo
-   :LspLog
-   :Mason
-   ```
-
-3. **Plugins not loading**:
-   ```vim
-   :Lazy sync
-   :Lazy clean
-   ```
-
-4. **Performance issues**:
-   ```vim
-   :checkhealth
-   :Lazy profile
-   ```
-
-### Getting Help
-
-- **Built-in help**: `<leader>fh` to search help tags
-- **Keybindings**: `<leader>fk` to browse all keymaps
-- **Which-key**: Press `<leader>` and wait for hints
-- **Plugin info**: `:Lazy` to see all plugins
-- **LSP status**: `:LspInfo` for current buffer
-
-## 📖 Resources
-
-- [Neovim Documentation](https://neovim.io/doc/)
-- [lazy.nvim Guide](https://github.com/folke/lazy.nvim)
-- [Mason LSP Registry](https://mason-registry.dev/registry/list)
-- [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code)
-
-## 🤝 Contributing
-
-Feel free to submit issues, fork the repository, and create pull requests for any improvements.
 
 ---
 
-Enjoy your modern Neovim setup! 🚀
+## 🔧 Customisation
+
+### CodeCompanion
+```bash
+export HELIXMIND_API_KEY="your_key"
+```
+Shortcuts: `<leader>ai` (chat) / `<leader>aa` (actions)
+
+### Add LSP servers
+- `:Mason` → install  
+- or edit `lua/plugins/lsp.lua`
+
+### Themes
+- `<leader>uc` → random
+- `<leader>uC` → choose  
+State file: `~/.local/share/nvim/themery/state.json`
+
+---
+
+## 🎯 Performance
+
+- **Startup:** 50-100 ms
+- Aggressive lazy-loading
+- Unused built-ins disabled
+
+Profiling: `:Lazy profile`, `:checkhealth`
+
+---
+
+## 🆘 Troubleshooting
+
+| Issue | Fix |
+|-------|-----|
+| Missing icons | Install a Nerd Font |
+| LSP inactive | `:LspInfo`, `:LspLog`, check Mason |
+| Plugins missing | `:Lazy sync`, `:Lazy clean` |
+| Slowness | `:Lazy profile`, `:checkhealth` |
+
+---
+
+## 🤝 Contributing
+
+Issues, forks and PRs are welcome.  
+**Code with passion; share with joy.** 🚀
