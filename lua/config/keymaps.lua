@@ -9,6 +9,41 @@ local function map(mode, lhs, rhs, opts)
   vim.keymap.set(mode, lhs, rhs, opts)
 end
 
+-- ---------------------------------------------------------------------
+-- 🔒 Buffer hide / show helpers
+-- ---------------------------------------------------------------------
+-- Maintain a stack of hidden buffers so we can reopen the most-recently
+-- hidden one with a single key-press.
+
+local hidden_buffers = {} ---@type integer[]
+
+local function hide_current_buffer()
+  local buf = vim.api.nvim_get_current_buf()
+  table.insert(hidden_buffers, buf)
+  vim.cmd.hide({ mods = { emsg_silent = true } })
+end
+
+local function show_last_hidden_buffer()
+  -- Pop buffers from the stack until we find one that is still loaded.
+  while #hidden_buffers > 0 do
+    local buf = table.remove(hidden_buffers)
+    if vim.api.nvim_buf_is_loaded(buf) then
+      vim.cmd("buffer " .. buf)
+      return
+    end
+  end
+  vim.notify("No hidden buffer to reopen", vim.log.levels.INFO)
+end
+
+-- Keymaps:
+--   <leader>bh → Hide the current buffer (keeps it in memory)
+--   <leader>bo → Re-open the most recently hidden buffer
+map("n", "<leader>bh", hide_current_buffer, { desc = "Hide buffer" })
+map("n", "<leader>bo", show_last_hidden_buffer, { desc = "Open hidden buffer" })
+
+-- ---------------------------------------------------------------------
+-- Existing keymaps
+-- ---------------------------------------------------------------------
 -- better up/down
 map({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 map({ "n", "x" }, "<Down>", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
@@ -231,4 +266,3 @@ map("n", "<leader>uc", function()
 end, { desc = "🔍 Telescope theme picker" })
 
 map("n", "<leader>uw", function() require('window-picker').pick_window() end, { desc = "🧺 Pick window" })
-
