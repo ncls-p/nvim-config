@@ -5,15 +5,26 @@ local function augroup(name)
   return vim.api.nvim_create_augroup("devops_" .. name, { clear = true })
 end
 
--- DevOps commands and keymaps
+-- DevOps commands and keymaps per filetype
 vim.api.nvim_create_autocmd("FileType", {
   group = augroup("keymaps"),
-  pattern = { "terraform", "hcl", "terraform-vars", "dockerfile", "yaml", "yaml.docker-compose", "yaml.ansible", "helm" },
+  pattern = {
+    "terraform",
+    "hcl",
+    "terraform-vars",
+    "dockerfile",
+    "yaml",
+    "yaml.docker-compose",
+    "yaml.ansible",
+    "helm",
+  },
   callback = function(event)
     local buf = event.buf
     local ft = vim.bo[buf].filetype
 
-    -- Terraform-specific keymaps
+    -------------------------------------------------------------------------
+    -- Terraform
+    -------------------------------------------------------------------------
     if ft:match("terraform") or ft == "hcl" then
       vim.keymap.set("n", "<leader>tf", "<cmd>!terraform fmt %<cr>", { buffer = buf, desc = "Terraform Format" })
       vim.keymap.set("n", "<leader>ti", "<cmd>!terraform init<cr>", { buffer = buf, desc = "Terraform Init" })
@@ -23,13 +34,17 @@ vim.api.nvim_create_autocmd("FileType", {
       vim.keymap.set("n", "<leader>tl", "<cmd>!tflint<cr>", { buffer = buf, desc = "Terraform Lint" })
     end
 
-    -- Docker-specific keymaps
+    -------------------------------------------------------------------------
+    -- Dockerfile
+    -------------------------------------------------------------------------
     if ft == "dockerfile" then
       vim.keymap.set("n", "<leader>db", "<cmd>!docker build -t temp-image .<cr>", { buffer = buf, desc = "Docker Build" })
       vim.keymap.set("n", "<leader>dl", "<cmd>!hadolint %<cr>", { buffer = buf, desc = "Docker Lint" })
     end
 
-    -- Docker Compose keymaps
+    -------------------------------------------------------------------------
+    -- Docker-Compose (YAML)
+    -------------------------------------------------------------------------
     if ft == "yaml.docker-compose" then
       vim.keymap.set("n", "<leader>dcu", "<cmd>!docker-compose up -d<cr>", { buffer = buf, desc = "Docker Compose Up" })
       vim.keymap.set("n", "<leader>dcd", "<cmd>!docker-compose down<cr>", { buffer = buf, desc = "Docker Compose Down" })
@@ -37,7 +52,9 @@ vim.api.nvim_create_autocmd("FileType", {
       vim.keymap.set("n", "<leader>dcv", "<cmd>!docker-compose config<cr>", { buffer = buf, desc = "Docker Compose Validate" })
     end
 
-    -- Kubernetes/YAML keymaps
+    -------------------------------------------------------------------------
+    -- Kubernetes & generic YAML
+    -------------------------------------------------------------------------
     if ft == "yaml" or ft == "helm" then
       vim.keymap.set("n", "<leader>ka", "<cmd>!kubectl apply -f %<cr>", { buffer = buf, desc = "Kubectl Apply" })
       vim.keymap.set("n", "<leader>kd", "<cmd>!kubectl delete -f %<cr>", { buffer = buf, desc = "Kubectl Delete" })
@@ -45,14 +62,18 @@ vim.api.nvim_create_autocmd("FileType", {
       vim.keymap.set("n", "<leader>ky", "<cmd>!yamllint %<cr>", { buffer = buf, desc = "YAML Lint" })
     end
 
-    -- Helm-specific keymaps
+    -------------------------------------------------------------------------
+    -- Helm
+    -------------------------------------------------------------------------
     if ft == "helm" then
       vim.keymap.set("n", "<leader>ht", "<cmd>!helm template . --debug<cr>", { buffer = buf, desc = "Helm Template" })
       vim.keymap.set("n", "<leader>hl", "<cmd>!helm lint .<cr>", { buffer = buf, desc = "Helm Lint" })
       vim.keymap.set("n", "<leader>hi", "<cmd>!helm install test . --dry-run<cr>", { buffer = buf, desc = "Helm Install (Dry Run)" })
     end
 
-    -- Ansible keymaps
+    -------------------------------------------------------------------------
+    -- Ansible
+    -------------------------------------------------------------------------
     if ft == "yaml.ansible" then
       vim.keymap.set("n", "<leader>ap", "<cmd>!ansible-playbook % --check<cr>", { buffer = buf, desc = "Ansible Check" })
       vim.keymap.set("n", "<leader>ar", "<cmd>!ansible-playbook %<cr>", { buffer = buf, desc = "Ansible Run" })
@@ -60,14 +81,20 @@ vim.api.nvim_create_autocmd("FileType", {
       vim.keymap.set("n", "<leader>av", "<cmd>!ansible-playbook % --syntax-check<cr>", { buffer = buf, desc = "Ansible Syntax Check" })
     end
 
-    -- Common DevOps keymaps for all filetypes
+    -------------------------------------------------------------------------
+    -- Common DevOps formatting shortcut
+    -------------------------------------------------------------------------
     vim.keymap.set("n", "<leader>cf", function()
       require("conform").format({ async = true, lsp_format = "fallback" })
     end, { buffer = buf, desc = "Format File" })
   end,
 })
 
--- Global DevOps commands
+------------------------------------------------------------------------------
+-- Global DevOps helpers
+------------------------------------------------------------------------------
+
+-- Information command
 vim.api.nvim_create_user_command("DevOpsInfo", function()
   print("DevOps Tools Available:")
   print("Terraform: tf[fmt|init|plan|apply|validate|lint]")
@@ -77,11 +104,11 @@ vim.api.nvim_create_user_command("DevOpsInfo", function()
   print("Ansible: a[check|run|lint|validate]")
 end, { desc = "Show DevOps commands" })
 
--- Schema validation commands
+-- Schema validation command
 vim.api.nvim_create_user_command("SchemaValidate", function(opts)
   local file = opts.args ~= "" and opts.args or vim.fn.expand("%")
   local ft = vim.bo.filetype
-  
+
   if ft == "yaml" or ft:match("yaml") then
     vim.cmd("!yamllint " .. file)
   elseif ft == "json" then
@@ -95,7 +122,11 @@ vim.api.nvim_create_user_command("SchemaValidate", function(opts)
   end
 end, { nargs = "?", desc = "Validate file schema" })
 
--- Quick access to common DevOps directories
+------------------------------------------------------------------------------
+-- Telescope helpers
+------------------------------------------------------------------------------
+
+-- Search helpers for common DevOps folders
 vim.keymap.set("n", "<leader>fk", function()
   require("telescope.builtin").find_files({
     prompt_title = "Find Kubernetes Files",
@@ -117,19 +148,13 @@ vim.keymap.set("n", "<leader>fd", function()
   })
 end, { desc = "Find Docker Files" })
 
--- DevOps live grep
-vim.keymap.set("n", "<leader>fgd", function()
-  require("telescope.builtin").live_grep({
-    prompt_title = "DevOps Live Grep",
-    type_filter = { "yaml", "yml", "tf", "hcl", "dockerfile" },
-  })
-end, { desc = "DevOps Live Grep" })
-
+------------------------------------------------------------------------------
 -- Quick open common DevOps files
+------------------------------------------------------------------------------
 local function quick_open_devops()
   local files = {
     "docker-compose.yml",
-    "docker-compose.yaml", 
+    "docker-compose.yaml",
     "Dockerfile",
     "terraform.tf",
     "main.tf",
@@ -143,7 +168,7 @@ local function quick_open_devops()
     "Makefile",
     "justfile",
   }
-  
+
   require("telescope.pickers").new({}, {
     prompt_title = "Quick Open DevOps Files",
     finder = require("telescope.finders").new_table({

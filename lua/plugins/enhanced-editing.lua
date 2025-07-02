@@ -255,14 +255,30 @@ return {
     event = "BufReadPost",
     version = "*",
     config = function()
+      -- Create two highlight groups with an explicit background
+      local hl_conflict_current  = "GitConflictCurrent"
+      local hl_conflict_incoming = "GitConflictIncoming"
+
+      vim.api.nvim_set_hl(0, hl_conflict_current,  { bg = "#3c3836" }) -- gray/brown
+      vim.api.nvim_set_hl(0, hl_conflict_incoming, { bg = "#073642" }) -- teal blue
+
+      -- Ensure the colors survive when the colorscheme changes
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        group = vim.api.nvim_create_augroup("GitConflictCustomHighlights", { clear = true }),
+        callback = function()
+          vim.api.nvim_set_hl(0, hl_conflict_current,  { bg = "#3c3836" })
+          vim.api.nvim_set_hl(0, hl_conflict_incoming, { bg = "#073642" })
+        end,
+      })
+
       require("git-conflict").setup({
         default_mappings = true,
         default_commands = true,
         disable_diagnostics = false,
         list_opener = "copen",
         highlights = {
-          incoming = "DiffAdd",
-          current = "DiffText",
+          current  = hl_conflict_current,
+          incoming = hl_conflict_incoming,
         },
       })
     end,

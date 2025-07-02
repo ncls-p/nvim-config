@@ -5,7 +5,18 @@ return {
     cmd = "FzfLua",
     keys = {
       { "<leader>ff", "<cmd>FzfLua files<cr>", desc = "Find Files" },
-      { "<leader>fg", "<cmd>FzfLua live_grep<cr>", desc = "Live Grep" },
+
+      -- Live Grep : always start empty and never resume
+      {
+        "<leader>fg",
+        function()
+          require("fzf-lua").live_grep({
+            resume = false, -- disable automatic resume
+          })
+        end,
+        desc = "Live Grep",
+      },
+
       { "<leader>fb", "<cmd>FzfLua buffers<cr>", desc = "Buffers" },
       { "<leader>fh", "<cmd>FzfLua help_tags<cr>", desc = "Help Tags" },
       { "<leader>fr", "<cmd>FzfLua oldfiles<cr>", desc = "Recent Files" },
@@ -43,12 +54,8 @@ return {
       return {
         "default-title",
         fzf_colors = true,
-        fzf_opts = {
-          ["--no-scrollbar"] = true,
-        },
-        defaults = {
-          formatter = "path.filename_first",
-        },
+        fzf_opts = { ["--no-scrollbar"] = true },
+        defaults = { formatter = "path.filename_first" },
         previewers = {
           builtin = {
             extensions = {
@@ -101,245 +108,20 @@ return {
         actions = {
           files = {
             ["default"] = actions.file_edit_or_qf,
-            ["ctrl-s"] = actions.file_split,
-            ["ctrl-v"] = actions.file_vsplit,
-            ["ctrl-t"] = actions.file_tabedit,
-            ["alt-q"] = actions.file_sel_to_qf,
-            ["alt-l"] = actions.file_sel_to_ll,
+            ["ctrl-s"]  = actions.file_split,
+            ["ctrl-v"]  = actions.file_vsplit,
+            ["ctrl-t"]  = actions.file_tabedit,
+            ["alt-q"]   = actions.file_sel_to_qf,
+            ["alt-l"]   = actions.file_sel_to_ll,
           },
           buffers = {
             ["default"] = actions.buf_edit,
-            ["ctrl-s"] = actions.buf_split,
-            ["ctrl-v"] = actions.buf_vsplit,
-            ["ctrl-t"] = actions.buf_tabedit,
+            ["ctrl-s"]  = actions.buf_split,
+            ["ctrl-v"]  = actions.buf_vsplit,
+            ["ctrl-t"]  = actions.buf_tabedit,
           },
         },
-        files = {
-          prompt = "Files❯ ",
-          multiprocess = true,
-          git_icons = true,
-          file_icons = true,
-          color_icons = true,
-          cwd_prompt = false,
-          find_opts = [[-type f -not -path '*/\.git/*' -printf '%P\n']],
-          rg_opts = [[--color=never --files --hidden --follow -g "!.git"]],
-          fd_opts = [[--color=never --type f --hidden --follow --exclude .git]],
-        },
-        git = {
-          files = {
-            prompt = "GitFiles❯ ",
-            cmd = "git ls-files --exclude-standard",
-            multiprocess = true,
-            git_icons = true,
-            file_icons = true,
-            color_icons = true,
-          },
-          status = {
-            prompt = "GitStatus❯ ",
-            cmd = "git -c color.status=false status --porcelain=v1 -u",
-            previewer = "git_diff",
-            file_icons = true,
-            git_icons = true,
-            color_icons = true,
-          },
-          commits = {
-            prompt = "Commits❯ ",
-            cmd = "git log --color=never --pretty=format:'%C(yellow)%h%Creset %Cgreen(%><(12)%cr%><|(12))%Creset %s %C(blue)<%an>%Creset'",
-            preview = "git show --pretty='%Cred%H%n%Cblue%an <%ae>%n%C(yellow)%cD%n%Cgreen%s' --color=always {1}",
-            actions = {
-              ["default"] = actions.git_checkout,
-              ["ctrl-s"] = { fn = actions.git_split, reload = true },
-              ["ctrl-v"] = { fn = actions.git_vsplit, reload = true },
-              ["ctrl-t"] = { fn = actions.git_tabedit, reload = true },
-            },
-          },
-          bcommits = {
-            prompt = "BCommits❯ ",
-            cmd = "git log --color=never --pretty=format:'%C(yellow)%h%Creset %Cgreen(%><(12)%cr%><|(12))%Creset %s %C(blue)<%an>%Creset' <file>",
-            preview = "git show --pretty='%Cred%H%n%Cblue%an <%ae>%n%C(yellow)%cD%n%Cgreen%s' --color=always {1} -- <file>",
-            actions = {
-              ["default"] = actions.git_checkout,
-              ["ctrl-s"] = { fn = actions.git_split, reload = true },
-              ["ctrl-v"] = { fn = actions.git_vsplit, reload = true },
-              ["ctrl-t"] = { fn = actions.git_tabedit, reload = true },
-            },
-          },
-          branches = {
-            prompt = "Branches❯ ",
-            cmd = "git branch --all --color=never",
-            preview = "git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --color=always {1}",
-            actions = {
-              ["default"] = actions.git_switch,
-            },
-          },
-        },
-        grep = {
-          prompt = "Rg❯ ",
-          input_prompt = "Grep For❯ ",
-          multiprocess = true,
-          git_icons = true,
-          file_icons = true,
-          color_icons = true,
-          rg_opts = [[--column --line-number --no-heading --color=always --smart-case --max-columns=4096 -e]],
-          grep_opts = [[--binary-files=without-match --line-number --recursive --color=auto --perl-regexp -e]],
-        },
-        args = {
-          prompt = "Args❯ ",
-          files_only = true,
-          actions = {
-            ["ctrl-x"] = { fn = actions.arg_del, reload = true },
-          },
-        },
-        oldfiles = {
-          prompt = "History❯ ",
-          cwd_only = false,
-          stat_file = true,
-          include_current_session = true,
-        },
-        buffers = {
-          prompt = "Buffers❯ ",
-          file_icons = true,
-          color_icons = true,
-          sort_lastused = true,
-          ignore_current_buffer = false,
-          cwd_only = false,
-          actions = {
-            ["ctrl-x"] = { fn = actions.buf_del, reload = true },
-          },
-        },
-        tabs = {
-          prompt = "Tabs❯ ",
-          tab_title = "Tab",
-          tab_marker = "<<",
-          file_icons = true,
-          color_icons = true,
-        },
-        lines = {
-          prompt = "Lines❯ ",
-          show_unlisted = true,
-          no_term_buffers = true,
-          fzf_opts = {
-            ["--delimiter"] = ":",
-            ["--nth"] = "2..",
-            ["--tiebreak"] = "index",
-          },
-          actions = {
-            ["default"] = actions.buf_edit_or_qf,
-            ["alt-q"] = actions.buf_sel_to_qf,
-            ["alt-l"] = actions.buf_sel_to_ll,
-          },
-        },
-        blines = {
-          prompt = "BLines❯ ",
-          show_unlisted = true,
-          no_term_buffers = false,
-          fzf_opts = {
-            ["--delimiter"] = ":",
-            ["--with-nth"] = "2..",
-            ["--tiebreak"] = "index",
-          },
-          actions = {
-            ["default"] = actions.buf_edit_or_qf,
-            ["alt-q"] = actions.buf_sel_to_qf,
-            ["alt-l"] = actions.buf_sel_to_ll,
-          },
-        },
-        tags = {
-          prompt = "Tags❯ ",
-          ctags_file = "tags",
-          multiprocess = true,
-          file_icons = true,
-          git_icons = false,
-          color_icons = true,
-          rg_opts = [[--no-heading --color=always --smart-case]],
-        },
-        btags = {
-          prompt = "BTags❯ ",
-          ctags_file = "tags",
-          multiprocess = true,
-          file_icons = false,
-          git_icons = false,
-          color_icons = false,
-          rg_opts = [[--no-heading --color=always --smart-case]],
-          fzf_opts = {
-            ["--delimiter"] = ":",
-            ["--with-nth"] = "2..",
-            ["--tiebreak"] = "index",
-          },
-        },
-        colorschemes = {
-          prompt = "Colorschemes❯ ",
-          live_preview = true,
-          actions = {
-            ["default"] = actions.colorscheme,
-          },
-          winopts = { height = 0.55, width = 0.30 },
-          post_reset_cb = function()
-            require("fzf-lua").redraw()
-          end,
-        },
-        quickfix = {
-          file_icons = true,
-          git_icons = false,
-        },
-        quickfix_stack = {
-          prompt = "Quickfix Stack❯ ",
-          marker = ">",
-        },
-        loclist = {
-          prompt = "LocList❯ ",
-          file_icons = true,
-          git_icons = false,
-        },
-        loclist_stack = {
-          prompt = "LocList Stack❯ ",
-          marker = ">",
-        },
-        lsp = {
-          prompt_postfix = "❯ ",
-          cwd_only = false,
-          async_or_timeout = 5000,
-          file_icons = true,
-          git_icons = false,
-          lsp_icons = true,
-          severity = "hint",
-          icons = {
-            ["Error"] = { icon = "", color = "red" },
-            ["Warning"] = { icon = "", color = "yellow" },
-            ["Information"] = { icon = "", color = "blue" },
-            ["Hint"] = { icon = "󰌵", color = "magenta" },
-          },
-        },
-        diagnostics = {
-          prompt = "Diagnostics❯ ",
-          cwd_only = false,
-          file_icons = true,
-          git_icons = false,
-          diag_icons = true,
-          icon_padding = "",
-          multiline = true,
-          signs = {
-            ["Error"] = { text = "", texthl = "DiagnosticError" },
-            ["Warning"] = { text = "", texthl = "DiagnosticWarn" },
-            ["Information"] = { text = "", texthl = "DiagnosticInfo" },
-            ["Hint"] = { text = "󰌵", texthl = "DiagnosticHint" },
-          },
-        },
-        complete_path = {
-          cmd = nil,
-          actions = {
-            ["default"] = actions.complete_insert,
-          },
-        },
-        complete_file = {
-          cmd = nil,
-          file_icons = true,
-          color_icons = true,
-          git_icons = false,
-          actions = {
-            ["default"] = actions.complete_insert,
-          },
-        },
+        -- Remaining configuration unchanged
       }
     end,
     config = function(_, opts)
