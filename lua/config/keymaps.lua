@@ -12,34 +12,58 @@ end
 -- ---------------------------------------------------------------------
 -- 🔒 Buffer hide / show helpers
 -- ---------------------------------------------------------------------
--- Maintain a stack of hidden buffers so we can reopen the most-recently
--- hidden one with a single key-press.
+-- Strategy:
+-- Instead of closing the window (which would lose its size & position),
+-- we replace the current buffer with a scratch buffer **in the same
+-- window**.  When we “re-open”, we simply put the original buffer back
+-- into that window, preserving the exact layout.
 
-local hidden_buffers = {} ---@type integer[]
+---@class HiddenEntry
+---@field buf integer  --- original buffer
+---@field win integer  --- window that holds the scratch buffer
 
+local hidden_stack = {} ---@type HiddenEntry[]
+
+---Hide the current buffer by swapping in a scratch buffer
 local function hide_current_buffer()
+  local win = vim.api.nvim_get_current_win()
   local buf = vim.api.nvim_get_current_buf()
-  table.insert(hidden_buffers, buf)
-  vim.cmd.hide({ mods = { emsg_silent = true } })
+
+  -- Create an ephemeral scratch buffer
+  local scratch = vim.api.nvim_create_buf(false, true) -- listed = false, scratch = true
+  vim.api.nvim_buf_set_option(scratch, "bufhidden", "wipe")
+  vim.api.nvim_win_set_buf(win, scratch)
+
+  table.insert(hidden_stack, { buf = buf, win = win })
 end
 
+---Re-open the most recently hidden buffer in its original window
 local function show_last_hidden_buffer()
-  -- Pop buffers from the stack until we find one that is still loaded.
-  while #hidden_buffers > 0 do
-    local buf = table.remove(hidden_buffers)
-    if vim.api.nvim_buf_is_loaded(buf) then
-      vim.cmd("buffer " .. buf)
+  while #hidden_stack > 0 do
+    local entry = table.remove(hidden_stack)
+    local buf_ok = vim.api.nvim_buf_is_loaded(entry.buf)
+    local win_ok = vim.api.nvim_win_is_valid(entry.win)
+
+    if buf_ok and win_ok then
+      -- Put buffer back into its original window
+      vim.api.nvim_win_set_buf(entry.win, entry.buf)
+      vim.api.nvim_set_current_win(entry.win)
+      return
+    elseif buf_ok then
+      -- Window no longer exists → open buffer in current window
+      vim.cmd("buffer " .. entry.buf)
       return
     end
+    -- Otherwise, buffer wiped; continue searching
   end
   vim.notify("No hidden buffer to reopen", vim.log.levels.INFO)
 end
 
 -- Keymaps:
---   <leader>bh → Hide the current buffer (keeps it in memory)
+--   <leader>bh → Hide the current buffer (keeps window)
 --   <leader>bs → Re-open the most recently hidden buffer
-map("n", "<leader>bh", hide_current_buffer, { desc = "Hide buffer" })
-map("n", "<leader>bs", show_last_hidden_buffer, { desc = "Open hidden buffer" })
+map("n", "<leader>bh", hide_current_buffer, { desc = "Hide buffer (keep window)" })
+map("n", "<leader>bs", show_last_hidden_buffer, { desc = "Show last hidden buffer" })
 
 -- ---------------------------------------------------------------------
 -- Existing keymaps
@@ -219,7 +243,6 @@ map("n", "<leader><tab>d", "<cmd>tabclose<cr>", { desc = "Close Tab" })
 map("n", "<leader><tab>[", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
 
 -- 🎨 Enhanced clipboard operations (2025 best practices)
--- System clipboard integration with Cmd/Ctrl + Y
 map({ "n", "v" }, "<D-y>", '"+y', { desc = "Copy to system clipboard (macOS)" })
 map({ "n", "v" }, "<C-y>", '"+y', { desc = "Copy to system clipboard" })
 map({ "n", "v" }, "<leader>y", '"+y', { desc = "Yank to system clipboard" })
@@ -236,22 +259,16 @@ map({ "n", "v" }, "<leader>d", '"_d', { desc = "Delete without yanking" })
 map("v", "<leader>p", '"_dP', { desc = "Replace without yanking" })
 
 -- ✨ Modern aesthetic keymaps
--- Note: <leader>fml and <leader>gol animations are handled by cellular-automaton plugin with safety checks
 map("n", "<leader>uz", "<cmd>ZenMode<cr>", { desc = "🧘 Zen Mode" })
 map("n", "<leader>ut", "<cmd>Twilight<cr>", { desc = "🌅 Twilight" })
--- 🎨 Theme picker with fallback
 map("n", "<leader>uT", function()
-  -- Try Themery first, fallback to Telescope
   local ok = pcall(vim.cmd, "Themery")
   if not ok then
     require("telescope.builtin").colorscheme({ enable_preview = true })
   end
 end, { desc = "🎨 Theme picker with live preview" })
 
--- 🔄 Quick theme toggle disabled - using Themery persistence instead
--- Use <leader>ut for Themery theme picker
-
--- 🔍 Telescope colorscheme picker (always available)
+-- Color scheme picker fallback
 map("n", "<leader>uc", function()
   local ok, _ = pcall(function()
     require("telescope.builtin").colorscheme({
@@ -260,9 +277,11 @@ map("n", "<leader>uc", function()
     })
   end)
   if not ok then
-    -- Fallback without preview if there are issues
     require("telescope.builtin").colorscheme({ enable_preview = false })
   end
 end, { desc = "🔍 Telescope theme picker" })
 
-map("n", "<leader>uw", function() require('window-picker').pick_window() end, { desc = "🧺 Pick window" })
+-- Window picker
+map("n", "<leader>uw", function()
+  require("window-picker").pick_window()
+end, { desc = "🧺 Pick window" })
