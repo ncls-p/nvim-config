@@ -46,7 +46,7 @@ return {
           -- Note: border config not supported in documentation window
         },
         ghost_text = {
-          enabled = true,
+          enabled = false,
         },
       },
 
