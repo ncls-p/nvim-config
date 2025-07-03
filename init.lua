@@ -51,3 +51,6 @@ require("lazy").setup({
     },
   },
 })
+
+-- Configuration LSP directe (temporaire pour diagnostiquer)
+require("lsp-direct").setup()

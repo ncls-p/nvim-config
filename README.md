@@ -8,7 +8,8 @@ An **ultra-modern** Neovim setup powered by **lazy.nvim** for lightning-fast sta
 
 ### 🔧 Core
 - **Plugin manager:** `lazy.nvim` (aggressive *lazy-loading*)
-- **Native LSP** via `mason.nvim` (auto-installs servers)
+- **Native LSP** with Neovim 0.11+ API (15+ languages supported)
+- **LSP servers:** Auto-installed via `mason.nvim` with trending 2025 tools
 - **Completion:** `blink.cmp` (fast, modern)
 - **Syntax tree:** `nvim-treesitter`
 - **UI:** rounded floating windows & filtered notifications (`nvim-notify`)
@@ -110,16 +111,16 @@ An **ultra-modern** Neovim setup powered by **lazy.nvim** for lightning-fast sta
 
 ## 🚀 Installation
 
-### Requirements
-- **Neovim** ≥ 0.10
-- **Git**, **ripgrep**
-- **Node.js** ≥ 16, **Python 3**
-- **fd** (optional), **Nerd Font**
+### Automated Install (Recommended)
+```bash
+# Download and run the cross-platform installer
+curl -fsSL https://raw.githubusercontent.com/ncls-p/nvim-config/main/install.sh | bash
+```
 
-### Quick install
+### Manual Install
 ```bash
 # Backup old config
-mv ~/.config/nvim ~/.config/nvim.backup
+mv ~/.config/nvim ~/.config/nvim.backup.$(date +%Y%m%d_%H%M%S)
 
 # Clone
 git clone https://github.com/ncls-p/nvim-config ~/.config/nvim
@@ -127,32 +128,93 @@ git clone https://github.com/ncls-p/nvim-config ~/.config/nvim
 # Start Neovim
 nvim
 ```
-First launch: bootstrap `lazy.nvim`, install plugins, LSP (Mason) & Treesitter parsers.
 
-### OS-specific guides
+### Requirements
+- **Neovim** ≥ 0.10 (0.11+ recommended for full LSP features)
+- **Git**, **ripgrep** (search)
+- **Node.js** ≥ 16, **Python 3** (LSP servers)
+- **fd** (optional but recommended), **Nerd Font**
+
+First launch: bootstrap `lazy.nvim`, install plugins, LSP servers via Mason & Treesitter parsers.
+
+### Supported Languages & LSP Servers (2025 Trending)
+| Language | LSP Server | Formatter | Linter |
+|----------|------------|-----------|--------|
+| **Python** | `basedpyright` | `ruff` | `ruff` |
+| **TypeScript/JS** | `vtsls` | `prettier` | `eslint` |
+| **Rust** | `rust-analyzer` | `rustfmt` | built-in |
+| **Go** | `gopls` | `gofmt` | `golangci-lint` |
+| **C/C++** | `clangd` | `clang-format` | `clang-tidy` |
+| **Zig** | `zls` | `zig fmt` | built-in |
+| **R** | `languageserver` | `styler` | `lintr` |
+| **Lua** | `lua-ls` | `stylua` | `selene` |
+| **JSON** | `jsonls` | `prettier` | built-in |
+| **YAML** | `yamlls` | `prettier` | built-in |
+| **Terraform** | `terraformls` | `terraform fmt` | `tflint` |
+| **Docker** | `dockerls` | built-in | `hadolint` |
+| **Bash** | `bashls` | `shfmt` | `shellcheck` |
+| **Markdown** | `marksman` | `prettier` | `markdownlint` |
+| **TOML** | `taplo` | built-in | built-in |
+
+### OS-specific Manual Setup
 <details><summary>macOS</summary>
 
 ```bash
-brew install neovim ripgrep fd node python@3.12
+# Homebrew installation
+brew install neovim ripgrep fd node python@3.12 git
 brew tap homebrew/cask-fonts
 brew install --cask font-jetbrains-mono-nerd-font
+
+# Global tools
+npm install -g @vtsls/language-server prettier eslint
+pip3 install ruff basedpyright
 ```
 </details>
 
 <details><summary>Ubuntu / Debian</summary>
 
 ```bash
-sudo add-apt-repository ppa:neovim-ppa/unstable
+# Package installation
+sudo add-apt-repository ppa:neovim-ppa/unstable -y
 sudo apt update
-sudo apt install neovim ripgrep fd-find nodejs npm python3 python3-pip
+sudo apt install neovim ripgrep fd-find nodejs npm python3 python3-pip git
+
+# Fix fd symlink
+sudo ln -sf /usr/bin/fdfind /usr/bin/fd
+
+# Global tools  
+npm install -g @vtsls/language-server prettier eslint
+pip3 install --user ruff basedpyright
 ```
 </details>
 
 <details><summary>Arch Linux</summary>
 
 ```bash
-sudo pacman -S neovim ripgrep fd nodejs npm python python-pip
+# Package installation
+sudo pacman -S neovim ripgrep fd nodejs npm python python-pip git
 yay -S ttf-jetbrains-mono-nerd
+
+# Global tools
+npm install -g @vtsls/language-server prettier eslint  
+pip install --user ruff basedpyright
+```
+</details>
+
+<details><summary>Windows</summary>
+
+```powershell
+# Using Scoop (recommended)
+scoop install neovim ripgrep fd nodejs python git
+scoop bucket add nerd-fonts
+scoop install JetBrainsMono-NF
+
+# Or using winget
+winget install Neovim.Neovim BurntSushi.ripgrep sharkdp.fd OpenJS.NodeJS Python.Python.3 Git.Git
+
+# Global tools
+npm install -g @vtsls/language-server prettier eslint
+pip install ruff basedpyright
 ```
 </details>
 
@@ -164,19 +226,21 @@ yay -S ttf-jetbrains-mono-nerd
 ~/.config/nvim/
 ├── init.lua
 ├── lua/
-│   ├── config/          # options, keymaps …
-│   └── plugins/         # ≈23 modules (LSP, UI, etc.)
-│       ├── lsp.lua
-│       ├── blink-cmp.lua
-│       ├── aesthetic-ui.lua
-│       ├── codecompanion.lua
-│       ├── devops.lua
-│       ├── enhanced-editing.lua
-│       ├── fzf.lua
-│       ├── mini.lua
-│       ├── theme-manager.lua
-│       ├── ultra-dashboard.lua
-│       └── …
+│   ├── config/          # options, keymaps, autocmds
+│   ├── plugins/         # ≈23 modules (LSP, UI, etc.)
+│   │   ├── lsp.lua      # Mason + LSP configurations
+│   │   ├── blink-cmp.lua
+│   │   ├── aesthetic-ui.lua
+│   │   ├── codecompanion.lua
+│   │   ├── devops.lua
+│   │   ├── enhanced-editing.lua
+│   │   ├── fzf.lua
+│   │   ├── mini.lua
+│   │   ├── theme-manager.lua
+│   │   ├── ultra-dashboard.lua
+│   │   └── …
+│   └── lsp-direct.lua   # Native LSP configuration (15+ languages)
+├── install.sh           # Cross-platform installer
 └── README.md
 ```
 
@@ -191,8 +255,9 @@ export HELIXMIND_API_KEY="your_key"
 Shortcuts: `<leader>ai` (chat) / `<leader>aa` (actions)
 
 ### Add LSP servers
-- `:Mason` → install  
-- or edit `lua/plugins/lsp.lua`
+- `:Mason` → install new servers
+- Add to `ensure_installed` in `lua/plugins/lsp.lua`
+- Configure in `lua/lsp-direct.lua` for native LSP support
 
 ### Themes
 - `<leader>uc` → random
@@ -216,9 +281,11 @@ Profiling: `:Lazy profile`, `:checkhealth`
 | Issue | Fix |
 |-------|-----|
 | Missing icons | Install a Nerd Font |
-| LSP inactive | `:LspInfo`, `:LspLog`, check Mason |
-| Plugins missing | `:Lazy sync`, `:Lazy clean` |
+| LSP inactive | `<leader>cl` (LSP status), `:Mason`, `:checkhealth lsp` |
+| Plugins missing | `:Lazy sync`, `:Lazy clean`, `:Lazy restore` |
+| Formatter not working | Check global tools: `npm list -g`, `pip list` |
 | Slowness | `:Lazy profile`, `:checkhealth` |
+| Install script fails | Check OS compatibility, run with `-x` for debug |
 
 ---
 
