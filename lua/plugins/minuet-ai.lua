@@ -15,6 +15,7 @@ return {
 
       require("minuet").setup({
         provider = "codestral",
+        notify = false, -- Disable all notifications
         provider_options = {
           codestral = {
             model = 'codestral-latest',

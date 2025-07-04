@@ -12,7 +12,7 @@ return {
       ensure_installed = {
         -- Language servers (trending 2025)
         "lua-language-server",              -- Lua LSP
-        "@vtsls/language-server",           -- TypeScript/JavaScript (most modern)
+        "vtsls",                            -- TypeScript/JavaScript (Vue/TS Language Server)
         "basedpyright",                     -- Python type checking
         "ruff",                             -- Python linting/formatting (Rust-based)
         "rust-analyzer",                    -- Rust (standard)
@@ -160,7 +160,7 @@ return {
 
       -- TypeScript Language Server
       vim.lsp.config('ts_ls', {
-        cmd = { 'typescript-language-server', '--stdio' },
+        cmd = { 'vtsls', '--stdio' },
         filetypes = { 'javascript', 'javascriptreact', 'javascript.jsx', 'typescript', 'typescriptreact', 'typescript.tsx' },
         root_markers = { 'tsconfig.json', 'package.json', 'jsconfig.json', '.git' },
         single_file_support = true,
