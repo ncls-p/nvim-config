@@ -274,7 +274,7 @@ function M.setup()
   vim.keymap.set('n', '<leader>cf', function()
     local filetype = vim.bo.filetype
     local filename = vim.api.nvim_buf_get_name(0)
-    
+
     -- External formatter mappings
     local formatters = {
       -- Web languages - Prettier
@@ -286,13 +286,13 @@ function M.setup()
       html = { 'prettier', '--stdin-filepath', filename },
       css = { 'prettier', '--stdin-filepath', filename },
       markdown = { 'prettier', '--stdin-filepath', filename },
-      
+
       -- Systems languages
       rust = { 'rustfmt', '--emit=stdout' },
       c = { 'clang-format', '--style=file' },
       cpp = { 'clang-format', '--style=file' },
       go = { 'gofmt' },
-      
+
       -- Scripts and configs
       sh = { 'shfmt', '-i', '2' },
       bash = { 'shfmt', '-i', '2' },
@@ -300,16 +300,16 @@ function M.setup()
       yml = { 'yamlfmt', '-' },
       terraform = { 'terraform', 'fmt', '-' },
       tf = { 'terraform', 'fmt', '-' },
-      
+
       -- Language-specific
       lua = { 'stylua', '-' },
     }
-    
+
     local cmd = formatters[filetype]
     if cmd then
       local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
       local input = table.concat(lines, '\n')
-      
+
       vim.fn.jobstart(cmd, {
         input = input,
         stdout_buffered = true,
@@ -354,7 +354,7 @@ function M.setup()
   vim.keymap.set('n', '<leader>cq', vim.diagnostic.setloclist, { desc = 'Diagnostic Quickfix' })
   vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Next Diagnostic' })
   vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Previous Diagnostic' })
-  
+
   -- Force refresh diagnostics
   vim.keymap.set('n', '<leader>cR', function()
     vim.diagnostic.reset()
@@ -387,15 +387,15 @@ function M.setup()
 
   -- Auto-format on save for all supported languages
   vim.api.nvim_create_autocmd('BufWritePre', {
-    pattern = { 
-      '*.js', '*.jsx', '*.ts', '*.tsx', '*.json', '*.html', '*.css', '*.md',  -- Web
+    pattern = {
+      '*.js', '*.jsx', '*.ts', '*.tsx', '*.json', '*.html', '*.css', '*.md', -- Web
       '*.rs',                                                                -- Rust
-      '*.c', '*.cpp', '*.h', '*.hpp',                                       -- C/C++
-      '*.go',                                                               -- Go
-      '*.sh', '*.bash',                                                     -- Shell
-      '*.yaml', '*.yml',                                                    -- YAML
-      '*.tf', '*.tfvars',                                                   -- Terraform
-      '*.lua',                                                              -- Lua
+      '*.c', '*.cpp', '*.h', '*.hpp',                                        -- C/C++
+      '*.go',                                                                -- Go
+      '*.sh', '*.bash',                                                      -- Shell
+      '*.yaml', '*.yml',                                                     -- YAML
+      '*.tf', '*.tfvars',                                                    -- Terraform
+      '*.lua',                                                               -- Lua
     },
     callback = function()
       -- Trigger the smart format function
@@ -404,7 +404,7 @@ function M.setup()
       vim.lsp.buf.format({ timeout_ms = 1000 })
     end,
   })
-
 end
 
 return M
+

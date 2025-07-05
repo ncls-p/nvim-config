@@ -32,10 +32,51 @@ return {
     end,
   },
   
-  -- Image.nvim is disabled for Neovide since it requires terminal graphics protocol
+  -- Image.nvim for molten output rendering
   {
     "3rd/image.nvim",
-    enabled = false, -- Disabled for Neovide compatibility
+    enabled = true,
+    pin = true,  -- Prevent updates (dependency of molten-nvim)
+    config = function()
+      -- Suppress terminal errors for GUI environments like Neovide
+      local ok, image = pcall(require, "image")
+      if not ok then
+        return
+      end
+      
+      -- Check if we're in a GUI environment
+      if vim.fn.has("gui_running") == 1 or vim.g.neovide then
+        -- Disable image rendering in GUI but keep plugin loaded for molten compatibility
+        image.setup({
+          backend = "none",
+          integrations = {},
+        })
+        return
+      end
+      
+      -- Full setup for terminal environments
+      image.setup({
+        backend = "kitty",
+        integrations = {
+          markdown = {
+            enabled = true,
+            clear_in_insert_mode = false,
+            download_remote_images = true,
+            only_render_image_at_cursor = false,
+            filetypes = { "markdown", "vimwiki" },
+          },
+        },
+        max_width = nil,
+        max_height = nil,
+        max_width_window_percentage = nil,
+        max_height_window_percentage = 50,
+        window_overlap_clear_enabled = false,
+        window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "" },
+        editor_only_render_when_focused = false,
+        tmux_show_only_in_active_window = false,
+        hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.avif" },
+      })
+    end,
   },
 
   -- PDF preview using peek.nvim for markdown->PDF workflow
