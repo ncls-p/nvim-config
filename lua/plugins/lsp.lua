@@ -30,13 +30,10 @@ return {
         -- Formatters (best-in-class 2025)
         "stylua",                           -- Lua formatter
         "prettier",                         -- JS/TS/JSON/HTML/CSS/MD
-        "rustfmt",                          -- Rust (built-in)
         "clang-format",                     -- C/C++
-        "gofmt",                            -- Go (official)
-        "goimports",                        -- Go imports
+        "goimports",                        -- Go imports (includes gofmt)
         "shfmt",                            -- Shell scripts
         "yamlfmt",                          -- YAML
-        "terraform-fmt",                    -- Terraform
         -- Linters (trending)
         "eslint_d",                         -- JavaScript/TypeScript (daemon)
         "shellcheck",                       -- Shell scripts

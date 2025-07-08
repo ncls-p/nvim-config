@@ -1,52 +1,23 @@
--- 🎨 Ultra Modern Theme Initialization (2025)
+-- Simple theme initialization for tokyonight
+-- This is just a fallback in case the theme plugin doesn't load properly
 
--- Skip theme initialization if Themery is configured
-local function is_themery_enabled()
-  local config_files = {
-    "lua/plugins/theme-manager.lua",
-    "lua/plugins/themery.lua"
-  }
-  
-  for _, file in ipairs(config_files) do
-    local path = vim.fn.stdpath("config") .. "/" .. file
-    if vim.fn.filereadable(path) == 1 then
-      local content = table.concat(vim.fn.readfile(path), "\n")
-      if content:match("zaldih/themery%.nvim") and not content:match("enabled%s*=%s*false") then
-        return true
-      end
-    end
-  end
-  return false
-end
-
--- Exit early if Themery is enabled
-if is_themery_enabled() then
-  return
-end
-
--- Set default colorscheme with fallback (only if no theme is already set)
 local function set_colorscheme()
   -- Don't override if a colorscheme is already set
   if vim.g.colors_name then
     return
   end
   
+  -- Fallback to default themes (theme persistence is handled in tokyonight plugin now)
   local colorschemes = {
     "tokyonight-night",
-    "rose-pine",
-    "kanagawa-wave",
-    "catppuccin-mocha",
-    "nightfox",
-    "gruvbox-material",
-    "oxocarbon",
+    "tokyonight",
     "habamax",
     "default"
   }
 
   for _, scheme in ipairs(colorschemes) do
-    local ok = pcall(vim.cmd.colorscheme, scheme)
-    if ok then
-      print("🎨 Applied fallback colorscheme: " .. scheme)
+    local success = pcall(vim.cmd.colorscheme, scheme)
+    if success then
       break
     end
   end
@@ -56,12 +27,14 @@ end
 vim.api.nvim_create_autocmd("User", {
   pattern = "VeryLazy",
   callback = function()
-    set_colorscheme()
-
-    -- Additional aesthetic enhancements
+    -- Enable termguicolors first
     if vim.fn.has("termguicolors") == 1 then
       vim.opt.termguicolors = true
     end
+    
+    -- Theme persistence is handled in tokyonight plugin now
+    -- This is just a fallback in case the plugin doesn't load
+    set_colorscheme()
 
     -- Set up some beautiful highlights
     vim.api.nvim_create_autocmd("ColorScheme", {
@@ -97,30 +70,7 @@ vim.api.nvim_create_autocmd("User", {
         vim.api.nvim_set_hl(0, "DiagnosticWarn", { fg = "#e0af68" })
         vim.api.nvim_set_hl(0, "DiagnosticInfo", { fg = "#7dcfff" })
         vim.api.nvim_set_hl(0, "DiagnosticHint", { fg = "#1abc9c" })
-
-        -- SmoothCursor colors
-        vim.api.nvim_set_hl(0, "SmoothCursor", { fg = "#7aa2f7" })
-        vim.api.nvim_set_hl(0, "SmoothCursorRed", { fg = "#f7768e" })
-        vim.api.nvim_set_hl(0, "SmoothCursorOrange", { fg = "#ff9e64" })
-        vim.api.nvim_set_hl(0, "SmoothCursorYellow", { fg = "#e0af68" })
-        vim.api.nvim_set_hl(0, "SmoothCursorGreen", { fg = "#9ece6a" })
-        vim.api.nvim_set_hl(0, "SmoothCursorAqua", { fg = "#73daca" })
-        vim.api.nvim_set_hl(0, "SmoothCursorBlue", { fg = "#7dcfff" })
-        vim.api.nvim_set_hl(0, "SmoothCursorPurple", { fg = "#bb9af7" })
       end,
     })
   end,
 })
-
--- Welcome message with style
-vim.api.nvim_create_autocmd("VimEnter", {
-  once = true,
-  callback = function()
-    if vim.fn.argc() == 0 then
-      vim.defer_fn(function()
-        print("🚀 Welcome to your Ultra Modern Neovim setup! ✨")
-      end, 1000)
-    end
-  end,
-})
-

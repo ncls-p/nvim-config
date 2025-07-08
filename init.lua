@@ -26,7 +26,7 @@ require("config.compat")
 require("config.options")
 require("config.keymaps")
 require("config.autocmds")
--- require("config.theme-init") -- Disabled - using Themery instead
+require("config.theme-init")
 
 -- Setup lazy.nvim
 require("lazy").setup({

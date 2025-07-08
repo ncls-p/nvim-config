@@ -97,7 +97,7 @@ map("n", "]q", vim.cmd.cnext, { desc = "Next quickfix" })
 
 -- formatting
 map({ "n", "v" }, "<leader>cf", function()
-  require("conform").format({ async = true, lsp_fallback = true })
+  vim.lsp.buf.format({ async = true })
 end, { desc = "Format" })
 
 -- diagnostic
@@ -204,14 +204,9 @@ map({ "n", "v" }, "<leader>d", '"_d', { desc = "Delete without yanking" })
 map("v", "<leader>p", '"_dP', { desc = "Replace without yanking" })
 
 -- ✨ Modern aesthetic keymaps
-map("n", "<leader>uz", "<cmd>ZenMode<cr>", { desc = "🧘 Zen Mode" })
-map("n", "<leader>ut", "<cmd>Twilight<cr>", { desc = "🌅 Twilight" })
 map("n", "<leader>uT", function()
-  local ok = pcall(vim.cmd, "Themery")
-  if not ok then
-    require("telescope.builtin").colorscheme({ enable_preview = true })
-  end
-end, { desc = "🎨 Theme picker with live preview" })
+  require("config.theme-persistence").theme_picker_with_persistence()
+end, { desc = "🎨 Theme picker with persistence" })
 
 -- Color scheme picker fallback
 map("n", "<leader>uc", function()
@@ -226,7 +221,3 @@ map("n", "<leader>uc", function()
   end
 end, { desc = "🔍 Telescope theme picker" })
 
--- Window picker
-map("n", "<leader>uw", function()
-  require("window-picker").pick_window()
-end, { desc = "🧺 Pick window" })

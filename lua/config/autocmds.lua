@@ -360,6 +360,4 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- Load DevOps keymaps
-require("config.devops-keymaps")
 
