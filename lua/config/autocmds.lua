@@ -361,3 +361,8 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 
+
+-- Load performance monitoring (optional)
+if vim.fn.has("profiling") == 1 or vim.env.NVIM_PROFILE then
+  require("config.performance")
+end

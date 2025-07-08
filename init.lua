@@ -32,6 +32,11 @@ require("config.theme-init")
 require("lazy").setup({
   spec = {
     { import = "plugins" },
+    { import = "plugins.completion" },
+    { import = "plugins.editor" },
+    { import = "plugins.lsp" },
+    { import = "plugins.ui" },
+    { import = "plugins.tools" },
   },
   defaults = {
     lazy = false,
@@ -52,5 +57,3 @@ require("lazy").setup({
   },
 })
 
--- Configuration LSP directe (temporaire pour diagnostiquer)
-require("lsp-direct").setup()

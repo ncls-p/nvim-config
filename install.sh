@@ -15,7 +15,9 @@ NC='\033[0m' # No Color
 # Configuration
 NVIM_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/nvim"
 BACKUP_DIR="${NVIM_CONFIG_DIR}.backup.$(date +%Y%m%d_%H%M%S)"
-REPO_URL="https://github.com/ncls-p/nvim-config"
+# Set this to your repository URL if you have one
+# REPO_URL="https://github.com/YOUR_USERNAME/nvim-config"
+CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Utility functions
 print_info() {
@@ -209,25 +211,26 @@ backup_existing_config() {
     fi
 }
 
-clone_configuration() {
-    print_info "Cloning Neovim configuration..."
-    git clone "$REPO_URL" "$NVIM_CONFIG_DIR"
-    print_success "Configuration cloned successfully"
+install_configuration() {
+    if [ -n "${REPO_URL:-}" ]; then
+        print_info "Cloning Neovim configuration from $REPO_URL..."
+        git clone "$REPO_URL" "$NVIM_CONFIG_DIR"
+    else
+        print_info "Copying local Neovim configuration..."
+        cp -r "$CURRENT_DIR" "$NVIM_CONFIG_DIR"
+    fi
+    print_success "Configuration installed successfully"
 }
 
 setup_global_tools() {
     print_info "Installing global tools..."
     
-    # Install global npm packages for LSP/formatters
-    if command_exists npm; then
-        npm install -g @vtsls/language-server prettier eslint
-    fi
+    # Mason will handle LSP server installation
+    print_info "LSP servers will be installed automatically by Mason when you open Neovim"
     
-    # Install Python packages
-    if command_exists pip3; then
-        pip3 install --user ruff basedpyright
-    elif command_exists pip; then
-        pip install --user ruff basedpyright
+    # Optional: Install Claude Code CLI if not present
+    if ! command_exists claude; then
+        print_warning "Claude Code CLI not found. Install it from: https://claude.ai/download"
     fi
     
     print_success "Global tools installed"
@@ -245,9 +248,12 @@ post_install_info() {
     print_info "Key shortcuts:"
     echo "• <Space>ff - Find files"
     echo "• <Space>fg - Live grep"
-    echo "• <Space>e - File explorer"
-    echo "• <Space>ai - AI chat"
-    echo "• <Space>uc - Random theme"
+    echo "• <Space>o  - Oil file manager"
+    echo "• <Space>cc - Claude Code"
+    echo "• <Space>ca - Code Companion AI"
+    echo "• <Space>uT - Theme picker"
+    echo "• <Tab>     - Next buffer"
+    echo "• <S-Tab>   - Previous buffer"
     echo
     print_info "Documentation: README.md in $NVIM_CONFIG_DIR"
     
@@ -259,7 +265,7 @@ post_install_info() {
 }
 
 main() {
-    echo "🚀 Modern Neovim Configuration Installer (2025)"
+    echo "🚀 Minimalist Neovim Configuration Installer"
     echo "================================================"
     echo
     
@@ -285,8 +291,8 @@ main() {
     # Backup existing configuration
     backup_existing_config
     
-    # Clone new configuration
-    clone_configuration
+    # Install configuration
+    install_configuration
     
     # Install global tools
     setup_global_tools
