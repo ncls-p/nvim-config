@@ -85,6 +85,27 @@ function M.get_format_enabled(buf)
   return M.format.enabled
 end
 
+-- Session persistence utilities
+local session_file = vim.fn.stdpath("data") .. "/session_settings.json"
+
+function M.load_session_settings()
+  local ok, content = pcall(vim.fn.readfile, session_file)
+  if ok and content and #content > 0 then
+    local settings = vim.fn.json_decode(table.concat(content, "\n"))
+    if settings and settings.relativenumber ~= nil then
+      vim.opt.relativenumber = settings.relativenumber
+    end
+  end
+end
+
+function M.save_session_settings()
+  local settings = {
+    relativenumber = vim.opt.relativenumber:get()
+  }
+  local content = vim.fn.json_encode(settings)
+  vim.fn.writefile({ content }, session_file)
+end
+
 function M.toggle(option, silent, values)
   if values then
     if type(values) == "boolean" then
@@ -101,6 +122,12 @@ function M.toggle(option, silent, values)
   else
     vim.opt_local[option] = not vim.opt_local[option]:get()
   end
+  
+  -- Save relativenumber setting to session
+  if option == "relativenumber" then
+    M.save_session_settings()
+  end
+  
   if not silent then
     vim.notify(string.format("Set %s to %s", option, vim.opt_local[option]:get()))
   end

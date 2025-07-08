@@ -362,6 +362,14 @@ vim.api.nvim_create_autocmd("FileType", {
 
 
 
+-- Load session settings on startup
+vim.api.nvim_create_autocmd("VimEnter", {
+  group = augroup("session_settings"),
+  callback = function()
+    require("config.util").load_session_settings()
+  end,
+})
+
 -- Load performance monitoring (optional)
 if vim.fn.has("profiling") == 1 or vim.env.NVIM_PROFILE then
   require("config.performance")
