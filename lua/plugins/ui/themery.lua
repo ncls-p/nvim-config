@@ -6,14 +6,16 @@ return {
     config = function()
       require("themery").setup({
         themes = {
-          "tokyonight-night",
-          "tokyonight-storm", 
-          "tokyonight-day",
-          "tokyonight-moon",
-          "onenord",
-          "oxocarbon",
           "default",
           "habamax",
+          "naysayer",
+          "oldworld",
+          "onenord",
+          "oxocarbon",
+          "tokyonight-day",
+          "tokyonight-moon",
+          "tokyonight-night",
+          "tokyonight-storm",
         },
         livePreview = true, -- Apply theme while browsing
       })
