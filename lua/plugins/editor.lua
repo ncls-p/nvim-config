@@ -14,14 +14,14 @@ return {
     },
     cmd = "Telescope",
     keys = {
-      { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
-      { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live Grep" },
-      { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
-      { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help Tags" },
-      { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Recent Files" },
+      { "<leader>ff", "<cmd>Telescope find_files<cr>",  desc = "Find Files" },
+      { "<leader>fg", "<cmd>Telescope live_grep<cr>",   desc = "Live Grep" },
+      { "<leader>fb", "<cmd>Telescope buffers<cr>",     desc = "Buffers" },
+      { "<leader>fh", "<cmd>Telescope help_tags<cr>",   desc = "Help Tags" },
+      { "<leader>fr", "<cmd>Telescope oldfiles<cr>",    desc = "Recent Files" },
       { "<leader>fc", "<cmd>Telescope colorscheme<cr>", desc = "Colorscheme" },
       { "<leader>fs", "<cmd>Telescope grep_string<cr>", desc = "Grep String" },
-      { "<leader>fk", "<cmd>Telescope keymaps<cr>", desc = "Key Maps" },
+      { "<leader>fk", "<cmd>Telescope keymaps<cr>",     desc = "Key Maps" },
       { "<leader>fd", "<cmd>Telescope diagnostics<cr>", desc = "Diagnostics" },
     },
     config = function()
@@ -89,7 +89,7 @@ return {
       "MunifTanjim/nui.nvim",
     },
     keys = {
-      { "<leader>e", "<cmd>Neotree toggle<cr>", desc = "Toggle Neotree" },
+      { "<leader>e",  "<cmd>Neotree toggle<cr>",               desc = "Toggle Neotree" },
       { "<leader>be", "<cmd>Neotree buffers reveal float<cr>", desc = "Buffer explorer" },
     },
     deactivate = function()
@@ -126,7 +126,7 @@ return {
             function(state)
               local node = state.tree:get_node()
               local path = node:get_id()
-              vim.fn.jobstart({"open", path}, {detach = true})
+              vim.fn.jobstart({ "open", path }, { detach = true })
             end,
             desc = "open with system application",
           },
@@ -161,29 +161,16 @@ return {
     event = "VeryLazy",
     opts = {
       plugins = { spelling = true },
+      delay = 250,
       spec = {
         {
           mode = { "n", "v" },
-          { "<leader><tab>", group = "tabs" },
-          { "<leader>b", group = "buffer" },
-          { "<leader>b1", group = "buffer numbers" },
-          { "<leader>c", group = "code" },
+          { "<leader>c",  group = "code" },
           { "<leader>cc", group = "claude" },
-          { "<leader>f", group = "file/find" },
-          { "<leader>g", group = "git" },
-          { "<leader>gc", group = "conflict" },
-          { "<leader>gh", group = "hunks" },
-          { "<leader>l", group = "lsp" },
-          { "<leader>q", group = "quit/session" },
-          { "<leader>s", group = "search" },
-          { "<leader>t", group = "terminal" },
-          { "<leader>u", group = "ui" },
-          { "<leader>w", group = "windows" },
-          { "<leader>x", group = "diagnostics/quickfix" },
-          { "[", group = "prev" },
-          { "]", group = "next" },
-          { "g", group = "goto" },
-          { "gz", group = "surround" },
+          { "<leader>f",  group = "file/find" },
+          { "<leader>g",  group = "git" },
+          { "<leader>t",  group = "terminal" },
+          { "<leader>u",  group = "ui" },
         },
       },
     },
@@ -309,12 +296,12 @@ return {
       },
     },
     keys = {
-      { "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", desc = "Document Diagnostics (Trouble)" },
-      { "<leader>xX", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", desc = "Buffer Diagnostics (Trouble)" },
-      { "<leader>xL", "<cmd>Trouble loclist toggle<cr>", desc = "Location List (Trouble)" },
-      { "<leader>xQ", "<cmd>Trouble qflist toggle<cr>", desc = "Quickfix List (Trouble)" },
+      { "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>",                        desc = "Document Diagnostics (Trouble)" },
+      { "<leader>xX", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",           desc = "Buffer Diagnostics (Trouble)" },
+      { "<leader>xL", "<cmd>Trouble loclist toggle<cr>",                            desc = "Location List (Trouble)" },
+      { "<leader>xQ", "<cmd>Trouble qflist toggle<cr>",                             desc = "Quickfix List (Trouble)" },
       { "<leader>xl", "<cmd>Trouble lsp toggle focus=false win.position=right<cr>", desc = "LSP Definitions / references / ... (Trouble)" },
-      { "<leader>xs", "<cmd>Trouble symbols toggle focus=false<cr>", desc = "Symbols (Trouble)" },
+      { "<leader>xs", "<cmd>Trouble symbols toggle focus=false<cr>",                desc = "Symbols (Trouble)" },
       {
         "[q",
         function()
@@ -348,3 +335,4 @@ return {
 
 
 }
+

@@ -30,7 +30,6 @@ function M.load_theme()
         vim.notify("Failed to load saved theme: " .. theme_name .. " - " .. tostring(err), vim.log.levels.WARN)
         return nil
       end
-      vim.notify("Loaded saved theme: " .. theme_name, vim.log.levels.INFO)
       return theme_name
     end
   end

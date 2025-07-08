@@ -82,8 +82,6 @@ map("v", ">", ">gv")
 -- lazy
 map("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
 
--- clipboard diagnostic
-map("n", "<leader>hc", "<cmd>checkhealth clipboard<cr>", { desc = "Check clipboard health" })
 
 -- new file
 map("n", "<leader>fn", "<cmd>enew<cr>", { desc = "New File" })
@@ -163,7 +161,7 @@ if vim.lsp.buf.inlay_hint or vim.lsp.inlay_hint then
     require("config.util").toggle_inlay_hints()
   end, { desc = "Toggle Inlay Hints" })
 end
-map("n", "<leader>uT", function()
+map("n", "<leader>uH", function()
   if vim.b.ts_highlight then
     vim.treesitter.stop()
   else
@@ -208,16 +206,4 @@ map("n", "<leader>uT", function()
   require("config.theme-persistence").theme_picker_with_persistence()
 end, { desc = "🎨 Theme picker with persistence" })
 
--- Color scheme picker fallback
-map("n", "<leader>uc", function()
-  local ok, _ = pcall(function()
-    require("telescope.builtin").colorscheme({
-      enable_preview = true,
-      ignore_builtins = true,
-    })
-  end)
-  if not ok then
-    require("telescope.builtin").colorscheme({ enable_preview = false })
-  end
-end, { desc = "🔍 Telescope theme picker" })
 

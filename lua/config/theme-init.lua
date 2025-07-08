@@ -6,7 +6,7 @@ local function set_colorscheme()
   if vim.g.colors_name then
     return
   end
-  
+
   -- Fallback to default themes (theme persistence is handled in tokyonight plugin now)
   local colorschemes = {
     "tokyonight-night",
@@ -31,7 +31,7 @@ vim.api.nvim_create_autocmd("User", {
     if vim.fn.has("termguicolors") == 1 then
       vim.opt.termguicolors = true
     end
-    
+
     -- Theme persistence is handled in tokyonight plugin now
     -- This is just a fallback in case the plugin doesn't load
     set_colorscheme()
@@ -74,3 +74,4 @@ vim.api.nvim_create_autocmd("User", {
     })
   end,
 })
+
