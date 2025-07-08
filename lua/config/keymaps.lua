@@ -202,8 +202,5 @@ map({ "n", "v" }, "<leader>d", '"_d', { desc = "Delete without yanking" })
 map("v", "<leader>p", '"_dP', { desc = "Replace without yanking" })
 
 -- ✨ Modern aesthetic keymaps
-map("n", "<leader>uT", function()
-  require("config.theme-persistence").theme_picker_with_persistence()
-end, { desc = "🎨 Theme picker with persistence" })
 
 

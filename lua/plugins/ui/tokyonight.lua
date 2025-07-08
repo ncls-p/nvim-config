@@ -25,20 +25,8 @@ return {
     },
     config = function(_, opts)
       require("tokyonight").setup(opts)
-      
-      -- Try to load saved theme after tokyonight is set up
-      vim.schedule(function()
-        local ok, theme_persistence = pcall(require, "config.theme-persistence")
-        if ok then
-          local saved_theme = theme_persistence.load_theme()
-          if not saved_theme then
-            -- Set default theme if no saved theme
-            vim.cmd.colorscheme("tokyonight-night")
-          end
-        else
-          vim.cmd.colorscheme("tokyonight-night")
-        end
-      end)
+      -- Default theme - Themery will handle persistence
+      vim.cmd.colorscheme("tokyonight-night")
     end,
   },
 }

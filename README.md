@@ -21,7 +21,12 @@ A clean, fast, and modern Neovim configuration focused on essential features for
 - **[blink.cmp](https://github.com/Saghen/blink.cmp)** - Fast completion engine
 
 ### UI
-- **Theme**: [tokyonight.nvim](https://github.com/folke/tokyonight.nvim) - Clean, modern colorscheme
+- **Theme Manager**: [themery.nvim](https://github.com/zaldih/themery.nvim) - Advanced theme switcher with persistence
+- **Transparency**: [transparent.nvim](https://github.com/xiyaowong/transparent.nvim) - Transparent background support
+- **Themes**: 
+  - [tokyonight.nvim](https://github.com/folke/tokyonight.nvim) - Clean, modern colorscheme (4 variants)
+  - [onenord.nvim](https://github.com/rmehri01/onenord.nvim) - Nord-inspired theme
+  - [oxocarbon.nvim](https://github.com/nyoom-engineering/oxocarbon.nvim) - Dark, IBM Carbon-inspired theme
 - **Statusline**: [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim) - Fast and customizable
 - **Bufferline**: [bufferline.nvim](https://github.com/akinsho/bufferline.nvim) - Buffer tabs
 - **Notifications**: [nvim-notify](https://github.com/rcarriga/nvim-notify) - Beautiful notifications
@@ -34,6 +39,7 @@ A clean, fast, and modern Neovim configuration focused on essential features for
   - `mini.comment` - Smart commenting
 - **[multicursor.nvim](https://github.com/jake-stewart/multicursor.nvim)** - Multiple cursors
 - **[neoscroll.nvim](https://github.com/karb94/neoscroll.nvim)** - Smooth scrolling
+- **[smear-cursor.nvim](https://github.com/sphamba/smear-cursor.nvim)** - Smooth cursor animations
 - **[gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim)** - Git integration
 
 ### Tools
@@ -125,7 +131,8 @@ The leader key is set to `<Space>`.
 ### UI
 | Key | Description |
 |-----|-------------|
-| `<leader>uT` | Theme picker (saves selection) |
+| `<leader>uT` | Theme manager (Themery) |
+| `<leader>ut` | Toggle transparency |
 | `<leader>un` | Dismiss notifications |
 
 ### LSP
