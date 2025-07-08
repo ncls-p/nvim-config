@@ -27,6 +27,7 @@ A clean, fast, and modern Neovim configuration focused on essential features for
   - [tokyonight.nvim](https://github.com/folke/tokyonight.nvim) - Clean, modern colorscheme (4 variants)
   - [onenord.nvim](https://github.com/rmehri01/onenord.nvim) - Nord-inspired theme
   - [oxocarbon.nvim](https://github.com/nyoom-engineering/oxocarbon.nvim) - Dark, IBM Carbon-inspired theme
+- **Dashboard**: [alpha-nvim](https://github.com/goolord/alpha-nvim) - Beautiful animated landing page
 - **Statusline**: [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim) - Fast and customizable
 - **Bufferline**: [bufferline.nvim](https://github.com/akinsho/bufferline.nvim) - Buffer tabs
 - **Notifications**: [nvim-notify](https://github.com/rcarriga/nvim-notify) - Beautiful notifications
