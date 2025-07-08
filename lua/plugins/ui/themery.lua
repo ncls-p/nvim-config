@@ -8,8 +8,11 @@ return {
         themes = {
           "default",
           "habamax",
-          "naysayer",
           "oldworld",
+          "scholar",
+          "mellifluous",
+          "zenbones",
+          "kanso",
           "onenord",
           "oxocarbon",
           "tokyonight-day",
