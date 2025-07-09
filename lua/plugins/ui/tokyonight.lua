@@ -25,8 +25,6 @@ return {
     },
     config = function(_, opts)
       require("tokyonight").setup(opts)
-      -- Default theme - Themery will handle persistence
-      vim.cmd.colorscheme("tokyonight-night")
     end,
   },
 }

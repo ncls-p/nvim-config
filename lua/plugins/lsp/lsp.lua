@@ -152,18 +152,28 @@ return {
         single_file_support = true,
       })
 
-      -- Python Language Server (Basedpyright) - Configuration officielle
+      -- Python Language Server (Basedpyright) - Modern configuration
       vim.lsp.config('basedpyright', {
         cmd = { 'basedpyright-langserver', '--stdio' },
         filetypes = { 'python' },
         root_markers = { 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt', 'Pipfile', 'pyrightconfig.json', '.git' },
         single_file_support = true,
+        on_new_config = function(config, root_dir)
+          -- Simple venv detection - basedpyright handles most of this automatically
+          local venv = vim.fn.finddir('.venv', root_dir .. ';')
+          if venv ~= '' then
+            config.settings.python = config.settings.python or {}
+            config.settings.python.pythonPath = venv .. '/bin/python'
+          end
+        end,
         settings = {
           basedpyright = {
             analysis = {
               autoSearchPaths = true,
               useLibraryCodeForTypes = true,
               diagnosticMode = 'openFilesOnly',
+              autoImportCompletions = true,
+              typeCheckingMode = "standard",
             },
           },
         },
@@ -202,8 +212,27 @@ return {
         },
       })
 
+      -- Rust Language Server (rust-analyzer)
+      vim.lsp.config('rust_analyzer', {
+        cmd = { 'rust-analyzer' },
+        filetypes = { 'rust' },
+        root_markers = { 'Cargo.toml', 'rust-project.json' },
+        single_file_support = false,
+        settings = {
+          ['rust-analyzer'] = {
+            cargo = { allFeatures = true },
+            checkOnSave = {
+              command = 'clippy',
+            },
+            procMacro = {
+              enable = true,
+            },
+          },
+        },
+      })
+
       -- Enable LSP servers
-      vim.lsp.enable({ 'lua_ls', 'ts_ls', 'basedpyright', 'ruff', 'sourcekit' })
+      vim.lsp.enable({ 'lua_ls', 'ts_ls', 'basedpyright', 'ruff', 'sourcekit', 'rust_analyzer' })
       
       -- Commande de diagnostic LSP
       vim.api.nvim_create_user_command('LspDebug', function()
@@ -299,7 +328,13 @@ return {
             vim.api.nvim_create_autocmd('BufWritePre', {
               buffer = bufnr,
               callback = function()
-                vim.lsp.buf.format({ bufnr = bufnr, timeout_ms = 1000 })
+                -- Use rustup for Rust formatting instead of Mason
+                if vim.bo.filetype == 'rust' then
+                  vim.cmd('silent! !rustup run stable rustfmt %')
+                  vim.cmd('edit!')
+                else
+                  vim.lsp.buf.format({ bufnr = bufnr, timeout_ms = 1000 })
+                end
               end,
             })
           end
