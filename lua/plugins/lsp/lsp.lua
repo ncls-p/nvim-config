@@ -89,17 +89,6 @@ return {
             vim.notify("LSP clients: " .. table.concat(names, ", "), vim.log.levels.INFO)
           end
         end, desc = "LSP Info" },
-      { "gd", vim.lsp.buf.definition, desc = "Go to Definition" },
-      { "gr", vim.lsp.buf.references, desc = "References" },
-      { "gD", vim.lsp.buf.declaration, desc = "Go to Declaration" },
-      { "gi", vim.lsp.buf.implementation, desc = "Go to Implementation" },
-      { "gy", vim.lsp.buf.type_definition, desc = "Go to Type Definition" },
-      { "K", vim.lsp.buf.hover, desc = "Hover" },
-      { "gK", vim.lsp.buf.signature_help, desc = "Signature Help" },
-      { "<c-k>", vim.lsp.buf.signature_help, mode = "i", desc = "Signature Help" },
-      { "<leader>ca", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "v" } },
-      { "<leader>cr", vim.lsp.buf.rename, desc = "Rename" },
-      { "<leader>cf", vim.lsp.buf.format, desc = "Format" },
       { "]d", vim.diagnostic.goto_next, desc = "Next Diagnostic" },
       { "[d", vim.diagnostic.goto_prev, desc = "Previous Diagnostic" },
       { "<leader>cd", vim.diagnostic.open_float, desc = "Show Diagnostic" },
@@ -285,6 +274,20 @@ return {
         callback = function(args)
           local client = vim.lsp.get_client_by_id(args.data.client_id)
           local bufnr = args.buf
+          
+          -- Set up LSP keybindings (buffer-specific)
+          local opts = { buffer = bufnr, silent = true }
+          vim.keymap.set("n", "gd", vim.lsp.buf.definition, vim.tbl_extend('force', opts, { desc = "Go to Definition" }))
+          vim.keymap.set("n", "gr", vim.lsp.buf.references, vim.tbl_extend('force', opts, { desc = "References" }))
+          vim.keymap.set("n", "gD", vim.lsp.buf.declaration, vim.tbl_extend('force', opts, { desc = "Go to Declaration" }))
+          vim.keymap.set("n", "gi", vim.lsp.buf.implementation, vim.tbl_extend('force', opts, { desc = "Go to Implementation" }))
+          vim.keymap.set("n", "gy", vim.lsp.buf.type_definition, vim.tbl_extend('force', opts, { desc = "Go to Type Definition" }))
+          vim.keymap.set("n", "K", vim.lsp.buf.hover, vim.tbl_extend('force', opts, { desc = "Hover" }))
+          vim.keymap.set("n", "gK", vim.lsp.buf.signature_help, vim.tbl_extend('force', opts, { desc = "Signature Help" }))
+          vim.keymap.set("i", "<c-k>", vim.lsp.buf.signature_help, vim.tbl_extend('force', opts, { desc = "Signature Help" }))
+          vim.keymap.set({"n", "v"}, "<leader>ca", vim.lsp.buf.code_action, vim.tbl_extend('force', opts, { desc = "Code Action" }))
+          vim.keymap.set("n", "<leader>cr", vim.lsp.buf.rename, vim.tbl_extend('force', opts, { desc = "Rename" }))
+          vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format, vim.tbl_extend('force', opts, { desc = "Format" }))
           
           -- Enable completion if supported
           if client and client.supports_method('textDocument/completion') then

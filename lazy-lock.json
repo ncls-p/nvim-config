@@ -8,7 +8,7 @@
   "codecompanion.nvim": { "branch": "main", "commit": "17f7cbb6cabdc12195f164acf4c59c7c7c205b64" },
   "dressing.nvim": { "branch": "master", "commit": "2d7c2db2507fa3c4956142ee607431ddb2828639" },
   "friendly-snippets": { "branch": "main", "commit": "572f5660cf05f8cd8834e096d7b4c921ba18e175" },
-  "gitsigns.nvim": { "branch": "main", "commit": "362fe61f9f19e9bceff178792780df5cce118a7d" },
+  "gitsigns.nvim": { "branch": "main", "commit": "a919563b75a5861fd465b8e81bf895d5fd441116" },
   "kanso.nvim": { "branch": "main", "commit": "748023fd273782e6e056620ce66a176532cdf375" },
   "lazy.nvim": { "branch": "main", "commit": "6c3bda4aca61a13a9c63f1c1d1b16b9d3be90d7a" },
   "lualine.nvim": { "branch": "master", "commit": "a94fc68960665e54408fe37dcf573193c4ce82c9" },
