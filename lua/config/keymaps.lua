@@ -202,5 +202,3 @@ map({ "n", "v" }, "<leader>d", '"_d', { desc = "Delete without yanking" })
 map("v", "<leader>p", '"_dP', { desc = "Replace without yanking" })
 
 -- ✨ Modern aesthetic keymaps
-
-

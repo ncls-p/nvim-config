@@ -1,182 +1,214 @@
 return {
-  -- Telescope
+  -- Mini.pick for fuzzy finding
   {
-    "nvim-telescope/telescope.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      {
-        "nvim-telescope/telescope-fzf-native.nvim",
-        build = "make",
-        cond = function()
-          return vim.fn.executable("make") == 1
-        end,
-      },
-    },
-    cmd = "Telescope",
+    "echasnovski/mini.pick",
+    version = false,
     keys = {
-      { "<leader>ff", "<cmd>Telescope find_files<cr>",  desc = "Find Files" },
-      { "<leader>fg", "<cmd>Telescope live_grep<cr>",   desc = "Live Grep" },
-      { "<leader>fb", "<cmd>Telescope buffers<cr>",     desc = "Buffers" },
-      { "<leader>fh", "<cmd>Telescope help_tags<cr>",   desc = "Help Tags" },
-      { "<leader>fr", "<cmd>Telescope oldfiles<cr>",    desc = "Recent Files" },
-      { "<leader>fc", "<cmd>Telescope colorscheme<cr>", desc = "Colorscheme" },
-      { "<leader>fs", "<cmd>Telescope grep_string<cr>", desc = "Grep String" },
-      { "<leader>fk", "<cmd>Telescope keymaps<cr>",     desc = "Key Maps" },
-      { "<leader>fd", "<cmd>Telescope diagnostics<cr>", desc = "Diagnostics" },
+      { "<leader>ff", function() require("mini.pick").builtin.files() end,                                      desc = "Find Files" },
+      { "<leader>fg", function() require("mini.pick").builtin.grep_live() end,                                  desc = "Live Grep" },
+      { "<leader>fb", function() require("mini.pick").builtin.buffers() end,                                    desc = "Buffers" },
+      { "<leader>fh", function() require("mini.pick").builtin.help() end,                                       desc = "Help Tags" },
+      { "<leader>fr", function() require("mini.pick").builtin.resume() end,                                     desc = "Resume Last" },
+      { "<leader>fs", function() require("mini.pick").builtin.grep({ pattern = vim.fn.expand("<cword>") }) end, desc = "Grep String" },
+      { "<leader>fd", function() require("mini.pick").builtin.diagnostic() end,                                 desc = "Diagnostics" },
     },
     config = function()
-      local telescope = require("telescope")
-      local actions = require("telescope.actions")
-
-      telescope.setup({
-        defaults = {
-          prompt_prefix = " ",
-          selection_caret = " ",
-          path_display = { "truncate" },
-          file_ignore_patterns = { ".git/", "node_modules" },
-          -- Modern rounded borders
-          borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
-          layout_config = {
-            prompt_position = "top",
-            preview_cutoff = 120,
-            horizontal = {
-              preview_width = 0.6,
-            },
-          },
-          sorting_strategy = "ascending",
-          mappings = {
-            i = {
-              ["<C-k>"] = actions.move_selection_previous,
-              ["<C-j>"] = actions.move_selection_next,
-              ["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
-            },
+      local get_git_status = function(path)
+        if vim.fn.executable("git") == 1 then
+          local git_status = vim.fn.system("git status --porcelain " .. vim.fn.shellescape(path)):gsub("\n", "")
+          if git_status ~= "" then
+            local first_char = git_status:sub(1, 1)
+            local second_char = git_status:sub(2, 2)
+            if first_char == "M" or second_char == "M" then
+              return "~ "
+            elseif first_char == "A" or second_char == "A" then
+              return "+ "
+            elseif first_char == "D" or second_char == "D" then
+              return "- "
+            elseif first_char == "?" then
+              return "? "
+            end
+          end
+        end
+        return ""
+      end
+      
+      local get_lsp_status = function(path)
+        local bufnr = vim.fn.bufnr(path)
+        if bufnr ~= -1 then
+          local diagnostics = vim.diagnostic.get(bufnr, { severity = vim.diagnostic.severity.ERROR })
+          if #diagnostics > 0 then
+            return " "
+          end
+        end
+        return ""
+      end
+      
+      require("mini.pick").setup({
+        options = {
+          use_cache = true,
+        },
+        mappings = {
+          move_down = "<C-j>",
+          move_up = "<C-k>",
+          choose_in_split = "<C-s>",
+          choose_in_vsplit = "<C-v>",
+          choose_in_tabpage = "<C-t>",
+        },
+        window = {
+          config = {
+            border = "rounded",
+            width = math.floor(0.8 * vim.o.columns),
+            height = math.floor(0.8 * vim.o.lines),
           },
         },
-        pickers = {
-          find_files = {
-            theme = "dropdown",
-            previewer = false,
-          },
-          buffers = {
-            theme = "dropdown",
-            previewer = false,
-            initial_mode = "normal",
-          },
-          colorscheme = {
-            enable_preview = true,
-          },
-        },
-        extensions = {
-          fzf = {
-            fuzzy = true,
-            override_generic_sorter = true,
-            override_file_sorter = true,
-            case_mode = "smart_case",
-          },
+        source = {
+          show = function(buf_id, items, query)
+            -- Custom display for file items
+            for i, item in ipairs(items) do
+              if item.path then
+                local git_status = get_git_status(item.path)
+                local lsp_status = get_lsp_status(item.path)
+                local prefix = git_status .. lsp_status
+                
+                -- Update the display text
+                if prefix ~= "" then
+                  item.text = prefix .. item.text
+                end
+              end
+            end
+            
+            -- Use default show function
+            return require("mini.pick").default_show(buf_id, items, query)
+          end,
         },
       })
-
-      pcall(telescope.load_extension, "fzf")
     end,
   },
 
-  -- File explorer
+  -- Mini.files for file exploration
   {
-    "nvim-neo-tree/neo-tree.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons",
-      "MunifTanjim/nui.nvim",
-    },
+    "echasnovski/mini.files",
+    version = false,
     keys = {
-      { "<leader>e",  "<cmd>Neotree toggle<cr>",               desc = "Toggle Neotree" },
-      { "<leader>be", "<cmd>Neotree buffers reveal float<cr>", desc = "Buffer explorer" },
+      { "<leader>e", function() require("mini.files").open() end,                             desc = "Open File Explorer" },
+      { "<leader>E", function() require("mini.files").open(vim.api.nvim_buf_get_name(0)) end, desc = "Open File Explorer (current file)" },
     },
-    deactivate = function()
-      vim.cmd([[Neotree close]])
-    end,
-    init = function()
-      if vim.fn.argc(-1) == 1 then
-        local stat = vim.uv.fs_stat(vim.fn.argv(0))
-        if stat and stat.type == "directory" then
-          require("neo-tree")
-        end
-      end
-    end,
-    opts = {
-      sources = { "filesystem", "buffers", "git_status", "document_symbols" },
-      open_files_do_not_replace_types = { "terminal", "Trouble", "trouble", "qf", "Outline" },
-      filesystem = {
-        bind_to_cwd = false,
-        follow_current_file = { enabled = true },
-        use_libuv_file_watcher = true,
-      },
-      window = {
-        mappings = {
-          ["<space>"] = "none",
-          ["Y"] = {
-            function(state)
-              local node = state.tree:get_node()
-              local path = node:get_id()
-              vim.fn.setreg("+", path, "c")
-            end,
-            desc = "copy path to clipboard",
-          },
-          ["O"] = {
-            function(state)
-              local node = state.tree:get_node()
-              local path = node:get_id()
-              vim.fn.jobstart({ "open", path }, { detach = true })
-            end,
-            desc = "open with system application",
-          },
-          ["P"] = { "toggle_preview", config = { use_float = false } },
+    config = function()
+      require("mini.files").setup({
+        content = {
+          filter = function(entry)
+            return entry.name ~= '.DS_Store' and entry.name ~= '.git'
+          end,
+          prefix = function(fs_entry)
+            local path = fs_entry.path
+            local name = fs_entry.name
+            local prefix = ""
+            
+            -- Add git status indicators
+            if vim.fn.executable("git") == 1 then
+              local git_status = vim.fn.system("git status --porcelain " .. vim.fn.shellescape(path)):gsub("\n", "")
+              if git_status ~= "" then
+                local first_char = git_status:sub(1, 1)
+                local second_char = git_status:sub(2, 2)
+                if first_char == "M" or second_char == "M" then
+                  prefix = prefix .. "~ "
+                elseif first_char == "A" or second_char == "A" then
+                  prefix = prefix .. "+ "
+                elseif first_char == "D" or second_char == "D" then
+                  prefix = prefix .. "- "
+                elseif first_char == "?" then
+                  prefix = prefix .. "? "
+                end
+              end
+            end
+            
+            -- Add LSP diagnostic indicators for files
+            if fs_entry.fs_type == "file" then
+              local bufnr = vim.fn.bufnr(path)
+              if bufnr ~= -1 then
+                local diagnostics = vim.diagnostic.get(bufnr, { severity = vim.diagnostic.severity.ERROR })
+                if #diagnostics > 0 then
+                  prefix = prefix .. " "
+                end
+              end
+            end
+            
+            return prefix
+          end,
         },
-      },
-      default_component_configs = {
-        indent = {
-          with_expanders = true,
-          expander_collapsed = "",
-          expander_expanded = "",
-          expander_highlight = "NeoTreeExpander",
+        windows = {
+          preview = true,
+          width_focus = 35,
+          width_preview = 50,
         },
-      },
-    },
-    config = function(_, opts)
-      require("neo-tree").setup(opts)
-      vim.api.nvim_create_autocmd("TermClose", {
-        pattern = "*lazygit",
-        callback = function()
-          if package.loaded["neo-tree.sources.git_status"] then
-            require("neo-tree.sources.git_status").refresh()
-          end
+        options = {
+          permanent_delete = true,
+        },
+      })
+
+      -- Auto-close when opening file
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "MiniFilesActionRename",
+        callback = function(event)
+          vim.schedule(function()
+            require("mini.files").close()
+          end)
         end,
       })
     end,
   },
 
-  -- Which-key
+  -- Mini.clue for key hints
   {
-    "folke/which-key.nvim",
+    "echasnovski/mini.clue",
+    version = false,
     event = "VeryLazy",
-    opts = {
-      plugins = { spelling = true },
-      delay = 250,
-      spec = {
-        {
-          mode = { "n", "v" },
-          { "<leader>c",  group = "code" },
-          { "<leader>cc", group = "claude" },
-          { "<leader>f",  group = "file/find" },
-          { "<leader>g",  group = "git" },
-          { "<leader>t",  group = "terminal" },
-          { "<leader>u",  group = "ui" },
+    config = function()
+      local miniclue = require("mini.clue")
+      miniclue.setup({
+        triggers = {
+          { mode = "n", keys = "<Leader>" },
+          { mode = "x", keys = "<Leader>" },
+          { mode = "n", keys = "g" },
+          { mode = "x", keys = "g" },
+          { mode = "n", keys = "'" },
+          { mode = "n", keys = "`" },
+          { mode = "x", keys = "'" },
+          { mode = "x", keys = "`" },
+          { mode = "n", keys = '"' },
+          { mode = "x", keys = '"' },
+          { mode = "n", keys = "<C-r>" },
+          { mode = "i", keys = "<C-r>" },
+          { mode = "c", keys = "<C-r>" },
+          { mode = "n", keys = "<C-w>" },
+          { mode = "n", keys = "z" },
+          { mode = "x", keys = "z" },
         },
-      },
-    },
-    config = function(_, opts)
-      local wk = require("which-key")
-      wk.setup(opts)
+        clues = {
+          { mode = "n", keys = "<Leader>c",  desc = "+Code" },
+          { mode = "n", keys = "<Leader>cc", desc = "+Claude" },
+          { mode = "n", keys = "<Leader>f",  desc = "+File/Find" },
+          { mode = "n", keys = "<Leader>g",  desc = "+Git" },
+          { mode = "n", keys = "<Leader>t",  desc = "+Terminal" },
+          { mode = "n", keys = "<Leader>u",  desc = "+UI" },
+          { mode = "n", keys = "<Leader>b",  desc = "+Buffer" },
+          { mode = "n", keys = "<Leader>x",  desc = "+Trouble" },
+          miniclue.gen_clues.builtin_completion(),
+          miniclue.gen_clues.g(),
+          miniclue.gen_clues.marks(),
+          miniclue.gen_clues.registers(),
+          miniclue.gen_clues.windows(),
+          miniclue.gen_clues.z(),
+        },
+        window = {
+          delay = 250,
+          config = {
+            border = "rounded",
+            width = "auto",
+          },
+        },
+      })
     end,
   },
 
@@ -240,11 +272,8 @@ return {
         winblend = 10,
       },
       select = {
-        -- Use telescope for selections
-        backend = { "telescope", "fzf_lua", "fzf", "builtin", "nui" },
-        telescope = require("telescope.themes").get_cursor({
-          borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
-        }),
+        -- Use mini.pick for selections
+        backend = { "builtin", "nui" },
         nui = {
           border = {
             style = "rounded",
@@ -335,4 +364,3 @@ return {
 
 
 }
-
