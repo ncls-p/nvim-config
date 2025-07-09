@@ -198,8 +198,23 @@ return {
         },
       })
 
+      -- Swift Language Server (SourceKit-LSP)
+      vim.lsp.config('sourcekit', {
+        cmd = { 'sourcekit-lsp' },
+        filetypes = { 'swift', 'c', 'cpp', 'objective-c', 'objective-cpp' },
+        root_markers = { 'Package.swift', '.git', 'compile_commands.json' },
+        single_file_support = true,
+        capabilities = {
+          workspace = {
+            didChangeWatchedFiles = {
+              dynamicRegistration = true,
+            },
+          },
+        },
+      })
+
       -- Enable LSP servers
-      vim.lsp.enable({ 'lua_ls', 'ts_ls', 'basedpyright', 'ruff' })
+      vim.lsp.enable({ 'lua_ls', 'ts_ls', 'basedpyright', 'ruff', 'sourcekit' })
       
       -- Commande de diagnostic LSP
       vim.api.nvim_create_user_command('LspDebug', function()
