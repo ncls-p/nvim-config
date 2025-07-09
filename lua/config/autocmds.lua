@@ -360,7 +360,46 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
-
+-- Enhanced indentation and bracket visualization per language
+vim.api.nvim_create_autocmd("FileType", {
+  group = augroup("indent_guides"),
+  pattern = { "python", "lua", "javascript", "typescript", "json", "yaml", "html", "css", "rust", "go", "c", "cpp" },
+  callback = function()
+    -- Enable list chars for better indentation visibility
+    vim.opt_local.list = true
+    vim.opt_local.listchars = {
+      tab = "│ ",
+      trail = "·",
+      extends = "›",
+      precedes = "‹",
+      nbsp = "·"
+    }
+    
+    -- Language-specific indentation settings
+    local ft = vim.bo.filetype
+    if ft == "python" then
+      vim.opt_local.tabstop = 4
+      vim.opt_local.shiftwidth = 4
+      vim.opt_local.softtabstop = 4
+      vim.opt_local.expandtab = true
+    elseif ft == "go" then
+      vim.opt_local.tabstop = 4
+      vim.opt_local.shiftwidth = 4
+      vim.opt_local.softtabstop = 4
+      vim.opt_local.expandtab = false  -- Go uses tabs
+    elseif vim.tbl_contains({ "javascript", "typescript", "json", "html", "css", "lua", "yaml" }, ft) then
+      vim.opt_local.tabstop = 2
+      vim.opt_local.shiftwidth = 2
+      vim.opt_local.softtabstop = 2
+      vim.opt_local.expandtab = true
+    elseif vim.tbl_contains({ "rust", "c", "cpp" }, ft) then
+      vim.opt_local.tabstop = 4
+      vim.opt_local.shiftwidth = 4
+      vim.opt_local.softtabstop = 4
+      vim.opt_local.expandtab = true
+    end
+  end,
+})
 
 -- Load session settings on startup
 vim.api.nvim_create_autocmd("VimEnter", {

@@ -11,34 +11,34 @@ return {
     opts = {
       ensure_installed = {
         -- Language servers (trending 2025)
-        "lua-language-server",              -- Lua LSP
-        "vtsls",                            -- TypeScript/JavaScript (Vue/TS Language Server)
-        "basedpyright",                     -- Python type checking
-        "ruff",                             -- Python linting/formatting (Rust-based)
-        "rust-analyzer",                    -- Rust (standard)
-        "clangd",                           -- C/C++ (Google, most maintained)
-        "zls",                              -- Zig (only option)
-        "gopls",                            -- Go (official, monopoly)
-        "r-languageserver",                 -- R (standard)
-        "json-lsp",                         -- JSON
-        "yaml-language-server",             -- YAML (Red Hat)
-        "terraform-ls",                     -- Terraform (HashiCorp official)
-        "dockerfile-language-server",       -- Docker
-        "bash-language-server",             -- Bash/Shell
-        "marksman",                         -- Markdown
-        "taplo",                            -- TOML
+        "lua-language-server",        -- Lua LSP
+        "vtsls",                      -- TypeScript/JavaScript (Vue/TS Language Server)
+        "basedpyright",               -- Python type checking
+        "ruff",                       -- Python linting/formatting (Rust-based)
+        "rust-analyzer",              -- Rust (standard)
+        "clangd",                     -- C/C++ (Google, most maintained)
+        "zls",                        -- Zig (only option)
+        "gopls",                      -- Go (official, monopoly)
+        "r-languageserver",           -- R (standard)
+        "json-lsp",                   -- JSON
+        "yaml-language-server",       -- YAML (Red Hat)
+        "terraform-ls",               -- Terraform (HashiCorp official)
+        "dockerfile-language-server", -- Docker
+        "bash-language-server",       -- Bash/Shell
+        "marksman",                   -- Markdown
+        "taplo",                      -- TOML
         -- Formatters (best-in-class 2025)
-        "stylua",                           -- Lua formatter
-        "prettier",                         -- JS/TS/JSON/HTML/CSS/MD
-        "clang-format",                     -- C/C++
-        "goimports",                        -- Go imports (includes gofmt)
-        "shfmt",                            -- Shell scripts
-        "yamlfmt",                          -- YAML
+        "stylua",                     -- Lua formatter
+        "prettier",                   -- JS/TS/JSON/HTML/CSS/MD
+        "clang-format",               -- C/C++
+        "goimports",                  -- Go imports (includes gofmt)
+        "shfmt",                      -- Shell scripts
+        "yamlfmt",                    -- YAML
         -- Linters (trending)
-        "eslint_d",                         -- JavaScript/TypeScript (daemon)
-        "shellcheck",                       -- Shell scripts
-        "hadolint",                         -- Dockerfile
-        "markdownlint",                     -- Markdown
+        "eslint_d",                   -- JavaScript/TypeScript (daemon)
+        "shellcheck",                 -- Shell scripts
+        "hadolint",                   -- Dockerfile
+        "markdownlint",               -- Markdown
       },
     },
     config = function(_, opts)
@@ -52,7 +52,7 @@ return {
           })
         end, 100)
       end)
-      
+
       local function ensure_installed()
         for _, tool in ipairs(opts.ensure_installed) do
           local p = mr.get_package(tool)
@@ -61,7 +61,7 @@ return {
           end
         end
       end
-      
+
       if mr.refresh then
         mr.refresh(ensure_installed)
       else
@@ -76,7 +76,9 @@ return {
     dir = vim.fn.stdpath("config"),
     event = { "BufReadPre", "BufNewFile" },
     keys = {
-      { "<leader>cl", function()
+      {
+        "<leader>cl",
+        function()
           -- Commande native pour voir les clients LSP attachés
           local clients = vim.lsp.get_clients({ bufnr = 0 })
           if #clients == 0 then
@@ -88,9 +90,11 @@ return {
             end
             vim.notify("LSP clients: " .. table.concat(names, ", "), vim.log.levels.INFO)
           end
-        end, desc = "LSP Info" },
-      { "]d", vim.diagnostic.goto_next, desc = "Next Diagnostic" },
-      { "[d", vim.diagnostic.goto_prev, desc = "Previous Diagnostic" },
+        end,
+        desc = "LSP Info"
+      },
+      { "]d",         vim.diagnostic.goto_next,  desc = "Next Diagnostic" },
+      { "[d",         vim.diagnostic.goto_prev,  desc = "Previous Diagnostic" },
       { "<leader>cd", vim.diagnostic.open_float, desc = "Show Diagnostic" },
       { "<leader>cq", vim.diagnostic.setloclist, desc = "Diagnostic Quickfix" },
     },
@@ -120,7 +124,7 @@ return {
       })
 
       -- Configure LSP servers directly (simple approach)
-      
+
       -- Lua Language Server
       vim.lsp.config('lua_ls', {
         cmd = { 'lua-language-server' },
@@ -233,11 +237,11 @@ return {
 
       -- Enable LSP servers
       vim.lsp.enable({ 'lua_ls', 'ts_ls', 'basedpyright', 'ruff', 'sourcekit', 'rust_analyzer' })
-      
+
       -- Commande de diagnostic LSP
       vim.api.nvim_create_user_command('LspDebug', function()
         print("=== LSP DEBUG INFO ===")
-        
+
         -- Configurations chargées
         print("Configurations LSP:")
         local configs = 0
@@ -250,7 +254,7 @@ return {
         if configs == 0 then
           print("  ✗ Aucune configuration trouvée")
         end
-        
+
         -- Clients actifs
         print("\nClients LSP actifs:")
         local clients = vim.lsp.get_clients()
@@ -261,7 +265,7 @@ return {
             print("  ✓ " .. client.name .. " (ID: " .. client.id .. ")")
           end
         end
-        
+
         -- Clients pour le buffer actuel
         print("\nClients pour le buffer actuel:")
         local buf_clients = vim.lsp.get_clients({ bufnr = 0 })
@@ -272,7 +276,7 @@ return {
             print("  ✓ " .. client.name)
           end
         end
-        
+
         print("=== FIN DEBUG ===")
       end, { desc = "Debug LSP configuration and clients" })
 
@@ -303,26 +307,32 @@ return {
         callback = function(args)
           local client = vim.lsp.get_client_by_id(args.data.client_id)
           local bufnr = args.buf
-          
+
           -- Set up LSP keybindings (buffer-specific)
           local opts = { buffer = bufnr, silent = true }
           vim.keymap.set("n", "gd", vim.lsp.buf.definition, vim.tbl_extend('force', opts, { desc = "Go to Definition" }))
           vim.keymap.set("n", "gr", vim.lsp.buf.references, vim.tbl_extend('force', opts, { desc = "References" }))
-          vim.keymap.set("n", "gD", vim.lsp.buf.declaration, vim.tbl_extend('force', opts, { desc = "Go to Declaration" }))
-          vim.keymap.set("n", "gi", vim.lsp.buf.implementation, vim.tbl_extend('force', opts, { desc = "Go to Implementation" }))
-          vim.keymap.set("n", "gy", vim.lsp.buf.type_definition, vim.tbl_extend('force', opts, { desc = "Go to Type Definition" }))
+          vim.keymap.set("n", "gD", vim.lsp.buf.declaration,
+            vim.tbl_extend('force', opts, { desc = "Go to Declaration" }))
+          vim.keymap.set("n", "gi", vim.lsp.buf.implementation,
+            vim.tbl_extend('force', opts, { desc = "Go to Implementation" }))
+          vim.keymap.set("n", "gy", vim.lsp.buf.type_definition,
+            vim.tbl_extend('force', opts, { desc = "Go to Type Definition" }))
           vim.keymap.set("n", "K", vim.lsp.buf.hover, vim.tbl_extend('force', opts, { desc = "Hover" }))
-          vim.keymap.set("n", "gK", vim.lsp.buf.signature_help, vim.tbl_extend('force', opts, { desc = "Signature Help" }))
-          vim.keymap.set("i", "<c-k>", vim.lsp.buf.signature_help, vim.tbl_extend('force', opts, { desc = "Signature Help" }))
-          vim.keymap.set({"n", "v"}, "<leader>ca", vim.lsp.buf.code_action, vim.tbl_extend('force', opts, { desc = "Code Action" }))
+          vim.keymap.set("n", "gK", vim.lsp.buf.signature_help,
+            vim.tbl_extend('force', opts, { desc = "Signature Help" }))
+          vim.keymap.set("i", "<c-k>", vim.lsp.buf.signature_help,
+            vim.tbl_extend('force', opts, { desc = "Signature Help" }))
+          vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action,
+            vim.tbl_extend('force', opts, { desc = "Code Action" }))
           vim.keymap.set("n", "<leader>cr", vim.lsp.buf.rename, vim.tbl_extend('force', opts, { desc = "Rename" }))
           vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format, vim.tbl_extend('force', opts, { desc = "Format" }))
-          
+
           -- Enable completion if supported
           if client and client.supports_method('textDocument/completion') then
             vim.lsp.completion.enable(true, client.id, bufnr, { autotrigger = true })
           end
-          
+
           -- Auto-format on save if supported
           if client and client.supports_method('textDocument/formatting') then
             vim.api.nvim_create_autocmd('BufWritePre', {
@@ -345,10 +355,11 @@ return {
       vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
         border = "rounded",
       })
-      
+
       vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
         border = "rounded",
       })
     end,
   },
 }
+
