@@ -235,8 +235,23 @@ return {
         },
       })
 
+      -- Marksman (Markdown LSP) configuration
+      vim.lsp.config('marksman', {
+        cmd = { vim.fn.expand('~/.local/share/nvim/mason/bin/marksman'), 'server' },
+        filetypes = { 'markdown', 'markdown.mdx' },
+        root_markers = { '.marksman.toml', '.git' },
+        single_file_support = true,
+        capabilities = {
+          workspace = {
+            didChangeWatchedFiles = {
+              dynamicRegistration = true
+            }
+          }
+        }
+      })
+
       -- Enable LSP servers
-      vim.lsp.enable({ 'lua_ls', 'ts_ls', 'basedpyright', 'ruff', 'sourcekit', 'rust_analyzer' })
+      vim.lsp.enable({ 'lua_ls', 'ts_ls', 'basedpyright', 'ruff', 'sourcekit', 'rust_analyzer', 'marksman' })
 
       -- Commande de diagnostic LSP
       vim.api.nvim_create_user_command('LspDebug', function()
