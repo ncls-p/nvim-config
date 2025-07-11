@@ -12,8 +12,8 @@ return {
     require('vgit').setup({
       -- Keymaps configuration
       keymaps = {
-        ['n <C-k>'] = function() require('vgit').hunk_up() end,
-        ['n <C-j>'] = function() require('vgit').hunk_down() end,
+        ['n ]h'] = function() require('vgit').hunk_down() end,
+        ['n [h'] = function() require('vgit').hunk_up() end,
         ['n <leader>gs'] = function() require('vgit').buffer_hunk_stage() end,
         ['n <leader>gr'] = function() require('vgit').buffer_hunk_reset() end,
         ['n <leader>gp'] = function() require('vgit').buffer_hunk_preview() end,
@@ -26,8 +26,8 @@ return {
         ['n <leader>gg'] = function() require('vgit').buffer_gutter_blame_preview() end,
         ['n <leader>gS'] = function() require('vgit').project_stash_preview() end,
         -- Navigation in hunk preview
-        ['n <leader>g]'] = function() require('vgit').hunk_down() end,
-        ['n <leader>g['] = function() require('vgit').hunk_up() end,
+        ['n <leader>g]'] = nil,  -- Remove duplicate
+        ['n <leader>g['] = nil,  -- Remove duplicate
       },
       -- Settings
       settings = {

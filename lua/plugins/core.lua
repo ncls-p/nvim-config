@@ -194,6 +194,8 @@ return {
           { mode = "n", keys = "<Leader>u",  desc = "+UI" },
           { mode = "n", keys = "<Leader>b",  desc = "+Buffer" },
           { mode = "n", keys = "<Leader>x",  desc = "+Trouble" },
+          { mode = "n", keys = "<Leader>m",  desc = "+Multicursor" },
+          { mode = "n", keys = "<Leader>a",  desc = "+AI" },
           miniclue.gen_clues.builtin_completion(),
           miniclue.gen_clues.g(),
           miniclue.gen_clues.marks(),

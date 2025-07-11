@@ -7,10 +7,8 @@ return {
     keys = {
       { "<leader>bp", function() vim.cmd("pin") end, desc = "Pin current buffer" },
       { "<leader>bo", function() vim.cmd("BufferCloseAllBut") end, desc = "Close all but current" },
-      { "<Tab>", function() vim.cmd("bnext") end, desc = "Next buffer" },
-      { "<S-Tab>", function() vim.cmd("bprevious") end, desc = "Previous buffer" },
-      { "[b", function() vim.cmd("bprevious") end, desc = "Previous buffer" },
-      { "]b", function() vim.cmd("bnext") end, desc = "Next buffer" },
+      { "<Tab>", "<cmd>bnext<cr>", desc = "Next buffer" },
+      { "<S-Tab>", "<cmd>bprevious<cr>", desc = "Previous buffer" },
     },
     config = function()
       require("mini.tabline").setup({
