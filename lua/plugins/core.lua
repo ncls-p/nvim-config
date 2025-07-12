@@ -90,6 +90,7 @@ return {
   {
     "echasnovski/mini.files",
     version = false,
+    dependencies = { "nvim-tree/nvim-web-devicons" },
     keys = {
       { "<leader>e", function() require("mini.files").open() end,                             desc = "Open File Explorer" },
       { "<leader>E", function() require("mini.files").open(vim.api.nvim_buf_get_name(0)) end, desc = "Open File Explorer (current file)" },
@@ -104,6 +105,21 @@ return {
             local path = fs_entry.path
             local name = fs_entry.name
             local prefix = ""
+            
+            -- Add file icons
+            local devicons = require("nvim-web-devicons")
+            if fs_entry.fs_type == "directory" then
+              local icon = devicons.get_icon(name, nil, { default = true })
+              if not icon then
+                icon = " " -- folder icon fallback
+              end
+              prefix = prefix .. icon .. " "
+            else
+              local icon, hl_group = devicons.get_icon(name, string.match(name, "%w+$"), { default = true })
+              if icon then
+                prefix = prefix .. icon .. " "
+              end
+            end
             
             -- Add git status indicators
             if vim.fn.executable("git") == 1 then
