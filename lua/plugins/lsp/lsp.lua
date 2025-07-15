@@ -250,8 +250,27 @@ return {
         }
       })
 
+      -- JSON Language Server configuration
+      vim.lsp.config('jsonls', {
+        cmd = { 'vscode-json-language-server', '--stdio' },
+        filetypes = { 'json', 'jsonc', 'jsonl' },
+        root_markers = { '.git', 'package.json' },
+        single_file_support = true,
+        init_options = {
+          provideFormatter = true,
+        },
+        settings = {
+          json = {
+            validate = { enable = true },
+            format = {
+              enable = true,
+            },
+          },
+        },
+      })
+
       -- Enable LSP servers
-      vim.lsp.enable({ 'lua_ls', 'ts_ls', 'basedpyright', 'ruff', 'sourcekit', 'rust_analyzer', 'marksman' })
+      vim.lsp.enable({ 'lua_ls', 'ts_ls', 'basedpyright', 'ruff', 'sourcekit', 'rust_analyzer', 'marksman', 'jsonls' })
 
       -- Commande de diagnostic LSP
       vim.api.nvim_create_user_command('LspDebug', function()
